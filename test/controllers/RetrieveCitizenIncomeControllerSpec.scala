@@ -21,9 +21,8 @@ import org.scalatestplus.play.OneAppPerSuite
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{POST, contentAsString, route, status}
+import play.api.test.Helpers.{POST, contentAsString, route, status, _}
 import play.modules.reactivemongo.ReactiveMongoComponent
-import play.api.test.Helpers._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -39,9 +38,135 @@ class RetrieveCitizenIncomeControllerSpec extends WordSpec with OneAppPerSuite w
     super.beforeEach()
   }
 
-  "Calling POST /retrievecitizenincome" should {
+  "Calling POST /seed/individuals/income" should {
 
-    "return 201 when successful" in {
+    "return 201 when successful when seeding a valid success response" in {
+
+      val retrieveCitizenIncomeValidSuccessJson = Json.parse(
+        """{
+          |  "matchPattern": 63,
+          |  "taxYears": [
+          |    {
+          |      "taxYear": "16-17",
+          |      "taxYearIndicator": "P",
+          |      "hmrcOfficeNumber": "099",
+          |      "employerPayeRef": "A1B2c3d4e5",
+          |      "employerName1": "Bugs Bunny",
+          |      "nationalInsuranceNumber": "AB123456C",
+          |      "surname": "Disney",
+          |      "gender": "M",
+          |      "uniqueEmploymentSequenceNumber": 9999,
+          |      "taxablePayInPeriod": 999999.99,
+          |      "taxDeductedOrRefunded": -12345.67,
+          |      "grossEarningsForNICs": 888888.66,
+          |      "taxablePayToDate": 999999.99,
+          |      "totalTaxToDate": 654321.08,
+          |      "numberOfNormalHoursWorked": "E",
+          |      "payFrequency": "M1",
+          |      "paymentDate": "2017-02-03",
+          |      "earningsPeriodsCovered": 11,
+          |      "uniquePaymentId": 666666,
+          |      "paymentConfidenceStatus": "1",
+          |      "taxCode": "11100L",
+          |      "trivialCommutationPaymentTypeA": 99998,
+          |      "hmrcReceiptTimestamp": "2018-04-16T09:23:55Z",
+          |      "rtiReceivedDate": "2018-04-16",
+          |      "apiAvailableTimestamp": "2018-04-16T09:23:55Z"
+          |    },
+          |    {
+          |      "taxYear": "15-16",
+          |      "taxYearIndicator": "P",
+          |      "hmrcOfficeNumber": "099",
+          |      "employerPayeRef": "A1B2c3d4e5",
+          |      "employerName1": "Donald Duck",
+          |      "nationalInsuranceNumber": "AB123456C",
+          |      "surname": "Disney",
+          |      "gender": "M",
+          |      "uniqueEmploymentSequenceNumber": 6666,
+          |      "taxablePayInPeriod": 666666.66,
+          |      "taxDeductedOrRefunded": 12345.67,
+          |      "grossEarningsForNICs": 777777.66,
+          |      "taxablePayToDate": 999999.99,
+          |      "totalTaxToDate": 43210,
+          |      "numberOfNormalHoursWorked": "E",
+          |      "payFrequency": "M3",
+          |      "paymentDate": "2017-02-03",
+          |      "earningsPeriodsCovered": 12,
+          |      "uniquePaymentId": 654321,
+          |      "paymentConfidenceStatus": "2",
+          |      "taxCode": "K15432",
+          |      "trivialCommutationPaymentTypeB": -99998,
+          |      "hmrcReceiptTimestamp": "2018-04-16T10:34:55Z",
+          |      "rtiReceivedDate": "2018-04-16",
+          |      "apiAvailableTimestamp": "2018-04-16T09:23:55Z"
+          |    }
+          |  ]
+          |}""".stripMargin)
+
+      val Some(r) = route(app, FakeRequest(POST, "/seed/individuals/income?description=Description")
+        .withJsonBody(retrieveCitizenIncomeValidSuccessJson)
+      )
+      status(r) shouldBe CREATED
+      contentAsString(r) shouldBe ""
+    }
+
+    "return 201 successful when seeding a valid error response" in {
+
+      val retrieveCitizenIncomeValidErrorJson = Json.parse(
+        """{
+          |  "failures": [
+          |    {
+          |      "code": "INVALID_NINO",
+          |      "reason": "Submission has not passed validation. Invalid parameter nino."
+          |    },
+          |    {
+          |      "code": "INVALID_PAYLOAD",
+          |      "reason": "Submission has not passed validation. Invalid Payload."
+          |    }
+          |  ]
+          |}""".stripMargin)
+
+      val Some(r) = route(app, FakeRequest(POST, "/seed/individuals/income?description=Description")
+        .withJsonBody(retrieveCitizenIncomeValidErrorJson)
+      )
+      status(r) shouldBe CREATED
+      contentAsString(r) shouldBe ""
+    }
+
+    "return 400 unsuccessful when seeding an invalid error response" in {
+
+      val retrieveCitizenIncomeInvalidErrorJson = Json.parse(
+        """{
+          |  "failures are invalid": [
+          |    {
+          |      "code": "Invalid error",
+          |      "reason": "Submission has not passed validation. Invalid parameter nino."
+          |    },
+          |    {
+          |      "code": "INVALID_PAYLOAD",
+          |      "reason": "Submission has not passed validation. Invalid Payload."
+          |    }
+          |  ]
+          |}""".stripMargin)
+
+      val Some(r) = route(app, FakeRequest(POST, "/seed/individuals/income?description=Description")
+        .withJsonBody(retrieveCitizenIncomeInvalidErrorJson)
+      )
+      status(r) shouldBe BAD_REQUEST
+    }
+  }
+
+  "Calling GET /individuals/income" should {
+
+    "return 404 when none found" in {
+
+      val controller = app.injector.instanceOf(classOf[RetrieveCitizenIncomeController])
+
+      val r = controller.getRetrieveCitizenIncome()(FakeRequest(GET, "/individuals/income"))
+      status(r) shouldBe NOT_FOUND
+    }
+
+    "return 200 and some json when present when successful" in {
 
       val retrieveCitizenIncomeJson = Json.parse(
         """{
@@ -104,14 +229,16 @@ class RetrieveCitizenIncomeControllerSpec extends WordSpec with OneAppPerSuite w
           |  ]
           |}""".stripMargin)
 
-      val Some(r) = route(app, FakeRequest(POST, "/seed/individuals/income?description=Description")
-        .withJsonBody(retrieveCitizenIncomeJson)
-      )
-      status(r) shouldBe CREATED
-      contentAsString(r) shouldBe ""
+
+      val controller = app.injector.instanceOf(classOf[RetrieveCitizenIncomeController])
+
+      status(route(app, FakeRequest(POST, "/seed/individuals/income?description=Description").withJsonBody(retrieveCitizenIncomeJson)).get)
+
+      val r = controller.getRetrieveCitizenIncome()(FakeRequest(GET, "/individuals/income").withJsonBody(retrieveCitizenIncomeJson))
+      status(r) shouldBe OK
+      contentAsJson(r) shouldBe retrieveCitizenIncomeJson
+
     }
   }
-
-
 
 }
