@@ -1,1 +1,2 @@
 POST  /seed/individuals/income                        controllers.RetrieveCitizenIncomeController.seedRetrieveCitizenIncome(status: Option[Int], description: String)
+GET   /individuals/income                             controllers.RetrieveCitizenIncomeController.getRetrieveCitizenIncome
