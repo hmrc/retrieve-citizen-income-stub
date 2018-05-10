@@ -11,8 +11,6 @@ addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.12")
 
 addSbtPlugin("uk.gov.hmrc" % "sbt-settings" % "3.0.0")
 
-addSbtPlugin("uk.gov.hmrc" % "hmrc-resolvers" % "0.4.0")
-
 addSbtPlugin("uk.gov.hmrc" % "sbt-distributables" % "1.0.0")
 
 addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.5.2")

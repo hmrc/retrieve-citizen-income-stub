@@ -59,7 +59,7 @@ class RetrieveCitizenIncomeController @Inject()(
     }
   }
 
-  def getRetrieveCitizenIncome() = UnauthorisedAction.async { implicit request =>
+  def getRetrieveCitizenIncome(nino: String) = UnauthorisedAction.async { implicit request =>
 
     schemaValidationHandler(request.body.asJson) match {
       case Left(JsSuccess(_, _)) =>
@@ -70,7 +70,7 @@ class RetrieveCitizenIncomeController @Inject()(
             Status(status)(Json.toJson(retrieveCitizenIncome))
           case None => NotFound
         }
-      case Right(JsError(_)) => Future.successful(NotFound)
+      case Right(JsError(_)) => Future.successful(BadRequest(Json.parse("{\"code\":\"INVALID_PAYLOAD\",\"reason\":\"Submission has not passed validation. Invalid Payload.\"}")))
     }
   }
 
