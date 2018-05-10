@@ -3,19 +3,17 @@
   "title": "API#1394 - Retrieve Citizen Income request schema v1.0",
   "type": "object",
   "additionalProperties": false,
-  "required": [
-    "matchPattern"
-  ],
+  "required": [ "matchPattern" ],
   "properties": {
     "matchPattern": {
       "type": "integer",
-      "description": "A bit vector of the fields that DID MATCH. Surname - bit 0 (decimal 1), First forename - bit 1 (decimal 2), Second forename - bit 2 (decimal 4), Gender - bit 3 (decimal 8), Initials - bit 4 (decimal 16), Date of birth - bit 5 (decimal 32)",
-      "minimum": 1,
+      "description": "Set to 63 when there was a match. otherwise a bit vector of the fields in the request that DID MATCH on the backend check. Surname - bit 0 (decimal 1), First forename - bit 1 (decimal 2), Second forename - bit 2 (decimal 4), Gender - bit 3 (decimal 8), Initials - bit 4 (decimal 16), Date of birth - bit 5 (decimal 32)",
+      "minimum": 0,
       "maximum": 63
     },
     "taxYears": {
       "type": "array",
-      "minItems": 0,
+      "minItems": 1,
       "uniqueItems": true,
       "additionalItems": false,
       "items": {

@@ -13,9 +13,7 @@
   "definitions": {
     "failureResponseArray": {
       "type": "object",
-      "required": [
-        "failures"
-      ],
+      "required": [ "failures" ],
       "properties": {
         "failures": {
           "type": "array",
@@ -35,10 +33,12 @@
           "type": "string",
           "enum": [
             "INVALID_NINO",
+            "INVALID_CORRELATIONID",
             "INVALID_PAYLOAD",
             "INVALID_DATE_RANGE",
             "INVALID_DATES_EQUAL",
             "NOT_FOUND_NINO",
+            "NOT_FOUND",
             "SERVER_ERROR",
             "SERVICE_UNAVAILABLE"
           ],

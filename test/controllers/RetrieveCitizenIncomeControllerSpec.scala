@@ -23,8 +23,10 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{POST, contentAsString, route, status, _}
 import play.modules.reactivemongo.ReactiveMongoComponent
+import uk.gov.hmrc.domain.{Generator, Nino, SaUtr}
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.Random
 
 class RetrieveCitizenIncomeControllerSpec extends WordSpec with OneAppPerSuite with Matchers with BeforeAndAfterEach  {
 
@@ -156,14 +158,15 @@ class RetrieveCitizenIncomeControllerSpec extends WordSpec with OneAppPerSuite w
     }
   }
 
-  "Calling GET /individuals/income" should {
+  "Calling POST /individuals/:nino/income" should {
 
-    "return 404 when none found" in {
+    "return 400 when request has no body so fails validation" in {
 
       val controller = app.injector.instanceOf(classOf[RetrieveCitizenIncomeController])
+      val nino = Nino(new Generator(new Random()).nextNino.nino).nino
 
-      val r = controller.getRetrieveCitizenIncome()(FakeRequest(GET, "/individuals/income"))
-      status(r) shouldBe NOT_FOUND
+      val r = controller.getRetrieveCitizenIncome(nino)(FakeRequest(POST, s"/individuals/$nino/income"))
+      status(r) shouldBe BAD_REQUEST
     }
 
     "return 200 and some json when present when successful" in {
@@ -231,10 +234,11 @@ class RetrieveCitizenIncomeControllerSpec extends WordSpec with OneAppPerSuite w
 
 
       val controller = app.injector.instanceOf(classOf[RetrieveCitizenIncomeController])
+      val nino = Nino(new Generator(new Random()).nextNino.nino).nino
 
       status(route(app, FakeRequest(POST, "/seed/individuals/income?description=Description").withJsonBody(retrieveCitizenIncomeJson)).get)
 
-      val r = controller.getRetrieveCitizenIncome()(FakeRequest(GET, "/individuals/income").withJsonBody(retrieveCitizenIncomeJson))
+      val r = controller.getRetrieveCitizenIncome(nino)(FakeRequest(POST, s"/individuals/$nino/income").withJsonBody(retrieveCitizenIncomeJson))
       status(r) shouldBe OK
       contentAsJson(r) shouldBe retrieveCitizenIncomeJson
 
