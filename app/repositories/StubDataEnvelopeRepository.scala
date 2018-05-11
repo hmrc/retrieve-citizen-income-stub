@@ -28,10 +28,10 @@ import uk.gov.hmrc.mongo.ReactiveRepository
 import scala.concurrent.{ExecutionContext, Future}
 
 class StubDataEnvelopeRepository[T <: StubDataEnvelope](
-                                                         db: () => reactivemongo.api.DefaultDB,
-                                                         collectionName: String,
-                                                         domainFormat : play.api.libs.json.Format[T]
-                                                       )(implicit m: Manifest[T]) extends ReactiveRepository[T, BSONObjectID](collectionName, db, domainFormat) with MongoDbConnection {
+  db: () => reactivemongo.api.DefaultDB,
+  collectionName: String,
+  domainFormat : play.api.libs.json.Format[T]
+)(implicit m: Manifest[T]) extends ReactiveRepository[T, BSONObjectID](collectionName, db, domainFormat) with MongoDbConnection {
 
   def activateEnvelope(id: String)(implicit ec: ExecutionContext): Future[Boolean] = {
     this.collection.update(
