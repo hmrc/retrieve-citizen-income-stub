@@ -5,6 +5,7 @@
 Retrieve Citizen Income Stub Usage
 --------------
 
+
 To add an envelope to the `Retrieve Citizen Income stub` to return a successful response use the following `curl` request:
 
     curl -XPOST \
