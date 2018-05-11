@@ -1,17 +1,15 @@
 import sbt._
 
 object MicroServiceBuild extends Build with MicroService {
-  import scala.util.Properties.envOrElse
 
   val appName = "retrieve-citizen-income-stub"
-  val appVersion = envOrElse("RETRIEVE_CITIZEN_INCOME_STUB_VERSION", "999-SNAPSHOT")
 
   override lazy val appDependencies: Seq[ModuleID] = AppDependencies()
 }
 
 private object AppDependencies {
-  import play.sbt.PlayImport._
   import play.core.PlayVersion
+  import play.sbt.PlayImport._
 
 
   val compile = Seq(
