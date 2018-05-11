@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.retrievecitizenincomestub.controllers
+package repositories
 
-import javax.inject.Singleton
+import javax.inject.Inject
 
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
-import play.api.mvc._
+import models.RetrieveCitizenIncomeEnvelope
+import play.modules.reactivemongo.{MongoDbConnection, ReactiveMongoComponent}
 
-import scala.concurrent.Future
+class RetrieveCitizenIncomeEnvelopeRepository @Inject()(rmc: ReactiveMongoComponent)
+  extends StubDataEnvelopeRepository(rmc.mongoConnector.db, "retrieveCitizenIncomeEnvelopes", RetrieveCitizenIncomeEnvelope.formats) with MongoDbConnection
 
-@Singleton()
-class MicroserviceHelloWorld extends BaseController {
-
-	def hello() = Action.async { implicit request =>
-		Future.successful(Ok("Hello world"))
-	}
-
-}
