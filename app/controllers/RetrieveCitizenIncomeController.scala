@@ -16,13 +16,13 @@
 
 package controllers
 
+import java.io.File
 import javax.inject.Inject
 
 import com.eclipsesource.schema.{SchemaType, SchemaValidator}
 import models.{FailurePutStubResponseResult, RetrieveCitizenIncomeEnvelope, SuccessPutStubResponseResult}
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import services.RetrieveCitizenIncomeEnvelopeService
-import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.play.bootstrap.controller.{BaseController, UnauthorisedAction}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -30,13 +30,44 @@ import scala.concurrent.Future
 import scala.io.Source
 
 class RetrieveCitizenIncomeController @Inject()(
-  val authConnector: AuthConnector,
   val retrieveCitizenIncomeEnvelopeService: RetrieveCitizenIncomeEnvelopeService
 ) extends BaseController {
 
-  def getJsonValue(file: String): JsValue = {
+  def schemaValidationHandler(jsonToValidate: Option[JsValue]): Either[JsSuccess[JsValue], JsError] = {
 
-    Json.parse(Source.fromFile(file).getLines.mkString)
+    val validator = new SchemaValidator()
+
+    val schemas: List[JsValue] = {
+      val dir = new File("resources")
+      dir.listFiles.filter(x => x.isFile && x.getName.endsWith(".json")).toList.map { file =>
+        Json.parse(Source.fromFile(file).getLines().mkString)
+      }
+    }
+
+    jsonToValidate match {
+      case Some(json) => {
+        if(schemas.exists(schema => validator.validate(Json.fromJson[SchemaType](schema).get)(json).isSuccess))
+          Left(JsSuccess(json))
+        else
+          Right(JsError("Does not validate against any schema"))
+      }
+      case None => Right(JsError("No json was supplied"))
+    }
+  }
+
+  def getRetrieveCitizenIncome(nino: String) = UnauthorisedAction.async { implicit request =>
+
+    schemaValidationHandler(request.body.asJson) match {
+      case Left(JsSuccess(_, _)) =>
+        retrieveCitizenIncomeEnvelopeService.getActiveEnvelope map {
+          case Some(RetrieveCitizenIncomeEnvelope(status, _, None, _)) =>
+            Status(status)("")
+          case Some(RetrieveCitizenIncomeEnvelope(status, _, Some(retrieveCitizenIncome), _)) =>
+            Status(status)(Json.toJson(retrieveCitizenIncome))
+          case None => NotFound
+        }
+      case Right(JsError(_)) => Future.successful(BadRequest(Json.parse("{\"code\":\"INVALID_PAYLOAD\",\"reason\":\"Submission has not passed validation. Invalid Payload.\"}")))
+    }
   }
 
   def seedRetrieveCitizenIncome(status: Option[Int], description: String) = UnauthorisedAction.async { implicit request =>
@@ -57,16 +88,13 @@ class RetrieveCitizenIncomeController @Inject()(
 
   def buildRetrieveCitizenIncomeEnvelope(json: Option[JsValue], status: Option[Int], description: String): Either[RetrieveCitizenIncomeEnvelope, String] = {
 
-    val validator = new SchemaValidator()
-    val schema = Json.fromJson[SchemaType](getJsonValue("resources/des-response-schema-v1.json")).get
-
     (json, status) match {
       case (Some(json), None) => {
 
-        validator.validate(schema)(json) match {
-          case JsSuccess(rci, _) =>
+        schemaValidationHandler(Some(json)) match {
+          case Left(JsSuccess(rci, _)) =>
             Left(RetrieveCitizenIncomeEnvelope(OK, description, Some(rci), None))
-          case JsError(errors) =>
+          case Right(JsError(errors)) =>
             Right("supplied json did not validate against expected response schema: " + errors.mkString("\n"))
         }
       }
