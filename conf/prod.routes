@@ -1,4 +1,5 @@
 POST  /seed/individuals/income                        @controllers.RetrieveCitizenIncomeController.seedRetrieveCitizenIncome(status: Option[Int], description: String)
+POST  /individuals/:nino/income                       @controllers.RetrieveCitizenIncomeController.getRetrieveCitizenIncome(nino: String)
 
 ->         /                          health.Routes
 
