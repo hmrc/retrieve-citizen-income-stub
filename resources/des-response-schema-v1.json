@@ -385,7 +385,7 @@
         "partnerNINO": {
           "type": "string",
           "description": "The NINO of the employee's social partner",
-          "pattern": "^((?!(BG|GB|KN|NK|NT|TN|ZZ)|(D|F|I|Q|U|V)[A-Z]|[A-Z](D|F|I|O|Q|U|V))[A-Z]{2})[0-9]{6}[A-D]?$"
+          "pattern": "^((?!(BG|GB|KN|NK|NT|TN|ZZ)|(D|F|I|Q|U|V)[A-Z]|[A-Z](D|F|I|O|Q|U|V))[A-Z]{2})[0-9]{6}[A-D ]?$"
         },
         "grossEarningsForNICsYearToDate": {
           "description": "Gross Earnings for NICs Year to Date",
