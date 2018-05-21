@@ -22,7 +22,7 @@ import javax.inject.Inject
 import com.eclipsesource.schema.{SchemaType, SchemaValidator}
 import models.{FailurePutStubResponseResult, RetrieveCitizenIncomeEnvelope, SuccessPutStubResponseResult}
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
-import services.RetrieveCitizenIncomeEnvelopeService
+import services.{RetrieveCitizenIncomeEnvelopeService, StubService}
 import uk.gov.hmrc.play.bootstrap.controller.{BaseController, UnauthorisedAction}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -30,7 +30,7 @@ import scala.concurrent.Future
 import scala.io.Source
 
 class RetrieveCitizenIncomeController @Inject()(
-  val retrieveCitizenIncomeEnvelopeService: RetrieveCitizenIncomeEnvelopeService
+  stubService: StubService
 ) extends BaseController {
 
   def schemaValidationHandler(jsonToValidate: Option[JsValue]): Either[JsSuccess[JsValue], JsError] = {
@@ -59,12 +59,11 @@ class RetrieveCitizenIncomeController @Inject()(
 
     schemaValidationHandler(request.body.asJson) match {
       case Left(JsSuccess(_, _)) =>
-        retrieveCitizenIncomeEnvelopeService.getActiveEnvelope map {
-          case Some(RetrieveCitizenIncomeEnvelope(status, _, None, _)) =>
-            Status(status)("")
-          case Some(RetrieveCitizenIncomeEnvelope(status, _, Some(retrieveCitizenIncome), _)) =>
-            Status(status)(Json.toJson(retrieveCitizenIncome))
-          case None => NotFound
+        stubService.getRetrieveCitizenIncome(nino).map {
+          case None =>
+            NotFound
+          case Some(json) =>
+            Ok(json)
         }
       case Right(JsError(_)) => Future.successful(BadRequest(Json.parse("{\"code\":\"INVALID_PAYLOAD\",\"reason\":\"Submission has not passed validation. Invalid Payload.\"}")))
     }
@@ -72,38 +71,16 @@ class RetrieveCitizenIncomeController @Inject()(
 
   def seedRetrieveCitizenIncome(status: Option[Int], description: String) = UnauthorisedAction.async { implicit request =>
 
-    buildRetrieveCitizenIncomeEnvelope(request.body.asJson, status, description) match {
-
-      case Left(retrieveCitizenIncomeEnvelope) =>
-        retrieveCitizenIncomeEnvelopeService.putAndActivateEnvelope(retrieveCitizenIncomeEnvelope) map {
+    schemaValidationHandler(request.body.asJson) match {
+      case Left(JsSuccess(_, _)) =>
+        stubService.seedRetrieveCitizenIncome(request.body.asJson, status, description).map {
           case SuccessPutStubResponseResult =>
             Created
           case FailurePutStubResponseResult =>
-            InternalServerError("Creation Failed\n")
+            InternalServerError("Creation failed\n")
         }
-      case Right(errorMessage) =>
-        Future.successful(BadRequest("Bad Request: " + errorMessage + "\n"))
+      case Right(JsError(errors)) =>
+        Future.successful(BadRequest("supplied json did not validate against expected response schema: " + errors.mkString("\n")))
     }
   }
-
-  def buildRetrieveCitizenIncomeEnvelope(json: Option[JsValue], status: Option[Int], description: String): Either[RetrieveCitizenIncomeEnvelope, String] = {
-
-    (json, status) match {
-      case (Some(json), None) => {
-
-        schemaValidationHandler(Some(json)) match {
-          case Left(JsSuccess(rci, _)) =>
-            Left(RetrieveCitizenIncomeEnvelope(OK, description, Some(rci), None))
-          case Right(JsError(errors)) =>
-            Right("supplied json did not validate against expected response schema: " + errors.mkString("\n"))
-        }
-      }
-      case (None, Some(status)) =>
-        Left( RetrieveCitizenIncomeEnvelope(status, description, None, None) )
-      case _ =>
-        Right("You must supply either valid retrieve citizen income json, or 'status' querystring parameters")
-    }
-  }
-
-
 }
