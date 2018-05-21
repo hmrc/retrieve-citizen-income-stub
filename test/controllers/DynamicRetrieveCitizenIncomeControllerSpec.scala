@@ -27,7 +27,7 @@ import uk.gov.hmrc.play.test.WithFakeApplication
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Random
 
-class RetrieveCitizenIncomeControllerSpec extends WordSpec with WithFakeApplication with Matchers with BeforeAndAfterEach  {
+class DynamicRetrieveCitizenIncomeControllerSpec extends WordSpec with WithFakeApplication with Matchers with BeforeAndAfterEach  {
 
   override lazy val fakeApplication = new GuiceApplicationBuilder()
     .configure("mongodb.uri" -> "mongodb://localhost:27017/retrieve-citizen-income-test")
