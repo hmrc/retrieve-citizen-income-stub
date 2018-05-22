@@ -46,7 +46,8 @@ trait MicroService {
       parallelExecution in IntegrationTest := false)
       .settings(resolvers ++= Seq(
         Resolver.bintrayRepo("hmrc", "releases"),
-        Resolver.jcenterRepo
+        Resolver.jcenterRepo,
+        Resolver.bintrayRepo("emueller", "maven")
       ))
 }
 
