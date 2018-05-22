@@ -22,17 +22,17 @@ import scala.io.Source
 
 class StaticStubService extends StubService {
 
-  val invalidNino = readJson("resources/json/400-invalid-nino.json")
-  val invalidCorrelationId = readJson("resources/json/400-invalid-correlation-id.json")
-  val invalidPayload = readJson("resources/json/400-invalid-payload.json")
-  val invalidDateRange = readJson("resources/json/400-invalid-date-range.json")
-  val invalidDatesEqual = readJson("resources/json/400-invalid-dates-equal.json")
-  val errorNotFound = readJson("resources/json/404-no-data-nino.json") //?
-  val errorNotFoundNino = readJson("resources/json/404-not-found-nino.json")
-  val serverError = readJson("resources/json/500-server-error.json")
-  val serviceUnavailable = readJson("resources/json/503-service-unavailable.json")
-  val successMatchOneYear = readJson("resources/json/200-success-matched-one-year.json")
-  val successMatchTwoYear = readJson("resources/json/200-success-matched-two-years.json")
+  val invalidNino = readJson("conf/resources/400-invalid-nino.json")
+  val invalidCorrelationId = readJson("conf/resources/400-invalid-correlation-id.json")
+  val invalidPayload = readJson("conf/resources/400-invalid-payload.json")
+  val invalidDateRange = readJson("conf/resources/400-invalid-date-range.json")
+  val invalidDatesEqual = readJson("conf/resources/400-invalid-dates-equal.json")
+  val errorNotFound = readJson("conf/resources/404-no-data-nino.json") //?
+  val errorNotFoundNino = readJson("conf/resources/404-not-found-nino.json")
+  val serverError = readJson("conf/resources/500-server-error.json")
+  val serviceUnavailable = readJson("conf/resources/503-service-unavailable.json")
+  val successMatchOneYear = readJson("conf/resources/200-success-matched-one-year.json")
+  val successMatchTwoYear = readJson("conf/resources/200-success-matched-two-years.json")
 
   override def getRetrieveCitizenIncome(nino: String): Future[Option[JsValue]] = {
       nino match {
