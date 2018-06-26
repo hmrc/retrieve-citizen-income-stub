@@ -40,7 +40,7 @@ class RetrieveCitizenIncomeController @Inject()(
     val validator = new SchemaValidator()
 
     val schemas: List[JsValue] = {
-      val dir = new File("conf/schemas")
+      val dir = new File("/conf/schemas")
       dir.listFiles.filter(x => x.isFile && x.getName.endsWith(".json")).toList.map { file =>
         Json.parse(Source.fromFile(file).getLines().mkString)
       }
