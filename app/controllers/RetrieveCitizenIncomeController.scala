@@ -20,6 +20,7 @@ import java.io.File
 
 import com.eclipsesource.schema.{SchemaType, SchemaValidator}
 import javax.inject.Inject
+
 import models.{FailurePutStubResponseResult, SuccessPutStubResponseResult}
 import play.api.Logger
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
@@ -28,6 +29,7 @@ import uk.gov.hmrc.play.bootstrap.controller.{BaseController, UnauthorisedAction
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.io.Source
 
 class RetrieveCitizenIncomeController @Inject()(
   stubService: StubService
@@ -38,13 +40,9 @@ class RetrieveCitizenIncomeController @Inject()(
     val validator = new SchemaValidator()
 
     val schemas: List[JsValue] = {
-      val dir = new File("conf/schemas/")
+      val dir = new File("conf/schemas")
       dir.listFiles.filter(x => x.isFile && x.getName.endsWith(".json")).toList.map { file =>
-        Logger.debug(s"$file")
-        //Json.parse(Source.fromFile(file).getLines().mkString)
-        val fileinput = scala.io.Source.fromFile(file)
-        val input = try fileinput.mkString finally fileinput.close()
-        Json.parse(input)
+        Json.parse(Source.fromFile(file).getLines().mkString)
       }
     }
 
