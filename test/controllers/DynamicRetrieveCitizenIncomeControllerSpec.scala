@@ -16,11 +16,13 @@
 
 import controllers.RetrieveCitizenIncomeController
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
+import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{POST, contentAsString, route, status, _}
 import play.modules.reactivemongo.ReactiveMongoComponent
+import services.{DynamicStubService, StaticStubService, StubService}
 import uk.gov.hmrc.domain.{Generator, Nino}
 import uk.gov.hmrc.play.test.WithFakeApplication
 
@@ -31,6 +33,7 @@ class DynamicRetrieveCitizenIncomeControllerSpec extends WordSpec with WithFakeA
 
   override lazy val fakeApplication = new GuiceApplicationBuilder()
     .configure("mongodb.uri" -> "mongodb://localhost:27017/retrieve-citizen-income-test")
+    .overrides(bind(classOf[StubService]).to(classOf[DynamicStubService]))
     .build()
 
 
