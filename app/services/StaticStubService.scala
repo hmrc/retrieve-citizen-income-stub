@@ -19,20 +19,21 @@ import play.api.libs.json.{JsValue, Json}
 
 import scala.concurrent.Future
 import scala.io.Source
+import play.api.mvc.Results
 
 class StaticStubService extends StubService {
 
-  val invalidNino = readJson("conf/responses/400-invalid-nino.json")
-  val invalidCorrelationId = readJson("conf/responses/400-invalid-correlation-id.json")
-  val invalidPayload = readJson("conf/responses/400-invalid-payload.json")
-  val invalidDateRange = readJson("conf/responses/400-invalid-date-range.json")
-  val invalidDatesEqual = readJson("conf/responses/400-invalid-dates-equal.json")
-  val errorNotFound = readJson("conf/responses/404-no-data-nino.json")
-  val errorNotFoundNino = readJson("conf/responses/404-not-found-nino.json")
-  val serverError = readJson("conf/responses/500-server-error.json")
-  val serviceUnavailable = readJson("conf/responses/503-service-unavailable.json")
-  val successMatchOneYear = readJson("conf/responses/200-success-matched-one-year.json")
-  val successMatchTwoYear = readJson("conf/responses/200-success-matched-two-years.json")
+  val invalidNino = getJsValue("/responses/400-invalid-nino.json")
+  val invalidCorrelationId = getJsValue("/responses/400-invalid-correlation-id.json")
+  val invalidPayload = getJsValue("/responses/400-invalid-payload.json")
+  val invalidDateRange = getJsValue("/responses/400-invalid-date-range.json")
+  val invalidDatesEqual = getJsValue("/responses/400-invalid-dates-equal.json")
+  val errorNotFound = getJsValue("/responses/404-no-data-nino.json")
+  val errorNotFoundNino = getJsValue("/responses/404-not-found-nino.json")
+  val serverError = getJsValue("/responses/500-server-error.json")
+  val serviceUnavailable = getJsValue("/responses/503-service-unavailable.json")
+  val successMatchOneYear = getJsValue("/responses/200-success-matched-one-year.json")
+  val successMatchTwoYear = getJsValue("/responses/200-success-matched-two-years.json")
 
   override def getRetrieveCitizenIncome(nino: String): Future[Option[JsValue]] = {
       nino match {
@@ -57,5 +58,13 @@ class StaticStubService extends StubService {
 
   private def readJson(file: String) = {
     Json.parse(Source.fromFile(file).getLines().mkString)
+  }
+
+  def getJsValue(jsFilePath:String)={
+    val jsonFilePath = getClass.getResource(jsFilePath)
+    jsonFilePath match {
+      case null => throw new Exception("Broken filepath")
+      case _ => Json.parse(Source.fromURL(jsonFilePath).getLines.mkString("\n"))
+    }
   }
 }
