@@ -22,17 +22,17 @@ import scala.io.Source
 
 class StaticStubService extends StubService {
 
-  val invalidNino = readJson("conf/resources/400-invalid-nino.json")
-  val invalidCorrelationId = readJson("conf/resources/400-invalid-correlation-id.json")
-  val invalidPayload = readJson("conf/resources/400-invalid-payload.json")
-  val invalidDateRange = readJson("conf/resources/400-invalid-date-range.json")
-  val invalidDatesEqual = readJson("conf/resources/400-invalid-dates-equal.json")
-  val errorNotFound = readJson("conf/resources/404-no-data-nino.json") //?
-  val errorNotFoundNino = readJson("conf/resources/404-not-found-nino.json")
-  val serverError = readJson("conf/resources/500-server-error.json")
-  val serviceUnavailable = readJson("conf/resources/503-service-unavailable.json")
-  val successMatchOneYear = readJson("conf/resources/200-success-matched-one-year.json")
-  val successMatchTwoYear = readJson("conf/resources/200-success-matched-two-years.json")
+  val invalidNino = readJson("conf/responses/400-invalid-nino.json")
+  val invalidCorrelationId = readJson("conf/responses/400-invalid-correlation-id.json")
+  val invalidPayload = readJson("conf/responses/400-invalid-payload.json")
+  val invalidDateRange = readJson("conf/responses/400-invalid-date-range.json")
+  val invalidDatesEqual = readJson("conf/responses/400-invalid-dates-equal.json")
+  val errorNotFound = readJson("conf/responses/404-no-data-nino.json")
+  val errorNotFoundNino = readJson("conf/responses/404-not-found-nino.json")
+  val serverError = readJson("conf/responses/500-server-error.json")
+  val serviceUnavailable = readJson("conf/responses/503-service-unavailable.json")
+  val successMatchOneYear = readJson("conf/responses/200-success-matched-one-year.json")
+  val successMatchTwoYear = readJson("conf/responses/200-success-matched-two-years.json")
 
   override def getRetrieveCitizenIncome(nino: String): Future[Option[JsValue]] = {
       nino match {
@@ -55,7 +55,7 @@ class StaticStubService extends StubService {
     Future.failed(throw new Exception("Cannot use seed endpoint in static stub mode, please refer to README"))
   }
 
-  private def readJson(path: String) = {
-    Json.parse(Source.fromFile(path).getLines().mkString)
+  private def readJson(file: String) = {
+    Json.parse(Source.fromFile(file).getLines().mkString)
   }
 }
