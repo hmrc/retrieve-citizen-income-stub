@@ -28,7 +28,6 @@ import uk.gov.hmrc.play.test.WithFakeApplication
 class StaticRetrieveCitizenIncomeControllerSpec  extends WordSpec with WithFakeApplication with Matchers with BeforeAndAfterEach {
 
   override lazy val fakeApplication = new GuiceApplicationBuilder()
-    .overrides(bind(classOf[StubService]).to(classOf[StaticStubService]))
     .build()
 
   val exampleRequest = Json.parse(
