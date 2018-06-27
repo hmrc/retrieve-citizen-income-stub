@@ -19,7 +19,6 @@ import play.api.libs.json.{JsValue, Json}
 
 import scala.concurrent.Future
 import scala.io.Source
-import play.api.mvc.Results
 
 class StaticStubService extends StubService {
 
@@ -52,15 +51,11 @@ class StaticStubService extends StubService {
       }
   }
 
-  override def seedRetrieveCitizenIncome(retrieveCitizenIncome: Option[JsValue], status: Option[Int], description: String) = {
+  override def seedRetrieveCitizenIncome(retrieveCitizenIncome: Option[JsValue], status: Option[Int], description: String): Future[Nothing] = {
     Future.failed(throw new Exception("Cannot use seed endpoint in static stub mode, please refer to README"))
   }
 
-  private def readJson(file: String) = {
-    Json.parse(Source.fromFile(file).getLines().mkString)
-  }
-
-  def getJsValue(jsFilePath:String)={
+  def getJsValue(jsFilePath:String): JsValue ={
     val jsonFilePath = getClass.getResource(jsFilePath)
     jsonFilePath match {
       case null => throw new Exception("Broken filepath")
