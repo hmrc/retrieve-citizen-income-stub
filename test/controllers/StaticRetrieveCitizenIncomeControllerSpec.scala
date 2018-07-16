@@ -59,15 +59,22 @@ class StaticRetrieveCitizenIncomeControllerSpec  extends WordSpec with WithFakeA
     }
 
     "return 200 response" when {
-      "there is a match with one year" in {
+      "there is a match with one element" in {
         val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AB123456C/income")
           .withJsonBody(exampleRequest))
 
         status(r) shouldBe OK
       }
 
-      "there is a match with two years" in {
+      "there is a match with two elements" in {
         val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA123456C/income")
+          .withJsonBody(exampleRequest))
+
+        status(r) shouldBe OK
+      }
+
+      "there is a match with two tax years of monthly data" in {
+        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA444444A/income")
           .withJsonBody(exampleRequest))
 
         status(r) shouldBe OK
