@@ -22,11 +22,6 @@ import scala.io.Source
 
 class StaticStubService extends StubService {
 
-  val invalidNino = getJsValue("/responses/400-invalid-nino.json")
-  val invalidCorrelationId = getJsValue("/responses/400-invalid-correlation-id.json")
-  val invalidPayload = getJsValue("/responses/400-invalid-payload.json")
-  val invalidDateRange = getJsValue("/responses/400-invalid-date-range.json")
-  val invalidDatesEqual = getJsValue("/responses/400-invalid-dates-equal.json")
   val errorNotFound = getJsValue("/responses/404-no-data-nino.json")
   val errorNotFoundNino = getJsValue("/responses/404-not-found-nino.json")
   val serverError = getJsValue("/responses/500-server-error.json")
@@ -34,23 +29,20 @@ class StaticStubService extends StubService {
   val successMatchOneElement = getJsValue("/responses/200-success-matched-one-element.json")
   val successMatchTwoElements = getJsValue("/responses/200-success-matched-two-elements.json")
   val successMatchTwoTaxYears = getJsValue("/responses/200-success-matched-two-tax-years.json")
+  val successNoMatch = getJsValue("/responses/200-success-no-match.json")
 
   override def getRetrieveCitizenIncome(nino: String): Future[Option[JsValue]] = {
-      nino match {
-        case "QQ123456A" => Future.successful(Some(invalidNino))
-        case "AC111111B" => Future.successful(Some(invalidCorrelationId))
-        case "AC111111C" => Future.successful(Some(invalidPayload))
-        case "AC222222C" => Future.successful(Some(invalidDateRange))
-        case "AC333333C" => Future.successful(Some(invalidDatesEqual))
-        case "AC333333D" => Future.successful(Some(serverError))
-        case "AC333333E" => Future.successful(Some(serviceUnavailable))
-        case "AA222222A" => Future.successful(Some(errorNotFound))
-        case "AA111111A" => Future.successful(Some(errorNotFoundNino))
-        case "AB123456C" => Future.successful(Some(successMatchOneElement))
-        case "AA123456C" => Future.successful(Some(successMatchTwoElements))
-        case "AA444444A" => Future.successful(Some(successMatchTwoTaxYears))
-        case _ => Future.successful(None)
-      }
+    nino match {
+      case "AA111111A" => Future.successful(Some(successMatchOneElement))
+      case "AA222222A" => Future.successful(Some(successMatchTwoElements))
+      case "AA333333A" => Future.successful(Some(successMatchTwoTaxYears))
+      case "AA444444A" => Future.successful(Some(successNoMatch))
+      case "AA555555A" => Future.successful(Some(errorNotFound))
+      case "AA666666A" => Future.successful(Some(errorNotFoundNino))
+      case "AA777777A" => Future.successful(Some(serverError))
+      case "AA888888A" => Future.successful(Some(serviceUnavailable))
+      case _ => Future.successful(None)
+    }
   }
 
   override def seedRetrieveCitizenIncome(retrieveCitizenIncome: Option[JsValue], status: Option[Int], description: String): Future[Nothing] = {
