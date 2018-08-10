@@ -63,10 +63,15 @@ class RetrieveCitizenIncomeController @Inject()(
     schemaValidationHandler(request.body.asJson) match {
       case Left(JsSuccess(_, _)) =>
         stubService.getRetrieveCitizenIncome(nino).map {
-          case None =>
+          case (None, Some(404)) =>
             NotFound
-          case Some(json) =>
+          case (Some(json), Some(200)) =>
             Ok(json)
+          case (Some(json), Some(404)) =>
+            NotFound(json)
+          case (Some(json), Some(500)) =>
+            InternalServerError(json)
+
         }
       case Right(JsError(_)) => Future.successful(BadRequest(Json.parse("{\"code\":\"INVALID_PAYLOAD\",\"reason\":\"Submission has not passed validation. Invalid Payload.\"}")))
     }

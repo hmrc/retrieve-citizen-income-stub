@@ -17,12 +17,11 @@
 package controllers
 
 import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
-import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{status, _}
-import services.{StaticStubService, StubService}
+import services.StaticStubService
 import uk.gov.hmrc.play.test.WithFakeApplication
 
 class StaticRetrieveCitizenIncomeControllerSpec  extends WordSpec with WithFakeApplication with Matchers with BeforeAndAfterEach {
@@ -44,36 +43,44 @@ class StaticRetrieveCitizenIncomeControllerSpec  extends WordSpec with WithFakeA
   "StaticRetrieveCitizenIncomeControllerSpec" should {
     "return 404 response" when {
       "stub has no data for given nino" in {
-        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA211111A/income")
+        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA555555A/income")
           .withJsonBody(exampleRequest))
 
         status(r) shouldBe NOT_FOUND
       }
 
-      "no data found for nino" in {
-        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA222222A/income")
+      "stub doesn't have the given nino" in {
+        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA666666A/income")
           .withJsonBody(exampleRequest))
 
-        status(r) shouldBe OK
+        status(r) shouldBe NOT_FOUND
       }
+
     }
 
     "return 200 response" when {
       "there is a match with one element" in {
-        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AB123456C/income")
+        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA111111A/income")
           .withJsonBody(exampleRequest))
 
         status(r) shouldBe OK
       }
 
       "there is a match with two elements" in {
-        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA123456C/income")
+        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA222222A/income")
           .withJsonBody(exampleRequest))
 
         status(r) shouldBe OK
       }
 
       "there is a match with two tax years of monthly data" in {
+        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA333333A/income")
+          .withJsonBody(exampleRequest))
+
+        status(r) shouldBe OK
+      }
+
+      "the nino is valid but there is no match in citizen details" in {
         val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA444444A/income")
           .withJsonBody(exampleRequest))
 
@@ -81,44 +88,21 @@ class StaticRetrieveCitizenIncomeControllerSpec  extends WordSpec with WithFakeA
       }
     }
 
-    "serve a 400 response" when {
-      "invalid payload" in {
-        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AC111111C/income")
-          .withJsonBody(exampleRequest))
-
-        status(r) shouldBe OK
-      }
-
-      "invalid date range" in {
-        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AC222222C/income")
-          .withJsonBody(exampleRequest))
-
-        status(r) shouldBe OK
-      }
-
-      "invalid date ranges equal" in {
-        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AC333333C/income")
-          .withJsonBody(exampleRequest))
-
-        status(r) shouldBe OK
-      }
-    }
-
-    "serve a 500 server error" when {
+ "serve a 500 server error" when {
       "des is currently experiencing technical difficulties" in {
-        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AC333333D/income")
+        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA777777A/income")
           .withJsonBody(exampleRequest))
 
-        status(r) shouldBe OK
+        status(r) shouldBe INTERNAL_SERVER_ERROR
       }
     }
 
     "serve a 503 service unavailable" when {
       "dependant systems are currently not responding." in {
-        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AC333333E/income")
+        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA888888A/income")
           .withJsonBody(exampleRequest))
 
-        status(r) shouldBe OK
+        status(r) shouldBe INTERNAL_SERVER_ERROR
       }
     }
   }

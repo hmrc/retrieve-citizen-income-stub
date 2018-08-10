@@ -26,9 +26,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class DynamicStubService @Inject() (envelopeService: RetrieveCitizenIncomeEnvelopeService) extends StubService {
 
-  override def getRetrieveCitizenIncome(nino: String): Future[Option[JsValue]] =
-    envelopeService.getActiveEnvelope map {
-      _.flatMap(_.retrieveCitizenIncome)
+  override def getRetrieveCitizenIncome(nino: String): Future[(Option[JsValue], Option[Int])] =
+    envelopeService.getActiveEnvelope map { env =>
+        (env.flatMap(_.retrieveCitizenIncome), env.map(_.status))
     }
 
   override def seedRetrieveCitizenIncome(retrieveCitizenIncome: Option[JsValue], status: Option[Int], description: String): Future[PutStubResponseResult] = {
