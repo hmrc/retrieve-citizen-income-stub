@@ -93,7 +93,7 @@ class StaticRetrieveCitizenIncomeControllerSpec  extends WordSpec with WithFakeA
         val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA777777A/income")
           .withJsonBody(exampleRequest))
 
-        status(r) shouldBe OK
+        status(r) shouldBe INTERNAL_SERVER_ERROR
       }
     }
 
@@ -102,7 +102,7 @@ class StaticRetrieveCitizenIncomeControllerSpec  extends WordSpec with WithFakeA
         val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA888888A/income")
           .withJsonBody(exampleRequest))
 
-        status(r) shouldBe OK
+        status(r) shouldBe INTERNAL_SERVER_ERROR
       }
     }
   }

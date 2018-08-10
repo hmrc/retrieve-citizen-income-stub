@@ -22,6 +22,6 @@ import play.api.libs.json.JsValue
 import scala.concurrent.Future
 
 trait StubService {
-  def getRetrieveCitizenIncome(nino: String): Future[Option[JsValue]]
+  def getRetrieveCitizenIncome(nino: String): Future[(Option[JsValue], Option[Int])]
   def seedRetrieveCitizenIncome(retrieveCitizenIncome: Option[JsValue], status: Option[Int], description: String): Future[PutStubResponseResult]
 }

@@ -31,17 +31,17 @@ class StaticStubService extends StubService {
   val successMatchTwoTaxYears = getJsValue("/responses/200-success-matched-two-tax-years.json")
   val successNoMatch = getJsValue("/responses/200-success-no-match.json")
 
-  override def getRetrieveCitizenIncome(nino: String): Future[Option[JsValue]] = {
+  override def getRetrieveCitizenIncome(nino: String): Future[(Option[JsValue], Option[Int])] = {
     nino match {
-      case "AA111111A" => Future.successful(Some(successMatchOneElement))
-      case "AA222222A" => Future.successful(Some(successMatchTwoElements))
-      case "AA333333A" => Future.successful(Some(successMatchTwoTaxYears))
-      case "AA444444A" => Future.successful(Some(successNoMatch))
-      case "AA555555A" => Future.successful(Some(errorNotFound))
-      case "AA666666A" => Future.successful(Some(errorNotFoundNino))
-      case "AA777777A" => Future.successful(Some(serverError))
-      case "AA888888A" => Future.successful(Some(serviceUnavailable))
-      case _ => Future.successful(None)
+      case "AA111111A" => Future.successful(Some(successMatchOneElement), Some(200))
+      case "AA222222A" => Future.successful(Some(successMatchTwoElements), Some(200))
+      case "AA333333A" => Future.successful(Some(successMatchTwoTaxYears), Some(200))
+      case "AA444444A" => Future.successful(Some(successNoMatch), Some(200))
+      case "AA555555A" => Future.successful(Some(errorNotFound), Some(404))
+      case "AA666666A" => Future.successful(Some(errorNotFoundNino), Some(404))
+      case "AA777777A" => Future.successful(Some(serverError), Some(500))
+      case "AA888888A" => Future.successful(Some(serviceUnavailable), Some(500))
+      case _ => Future.successful(None, Some(500))
     }
   }
 

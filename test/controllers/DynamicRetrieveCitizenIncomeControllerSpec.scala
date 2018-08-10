@@ -238,7 +238,7 @@ class DynamicRetrieveCitizenIncomeControllerSpec extends WordSpec with WithFakeA
       val controller = fakeApplication.injector.instanceOf(classOf[RetrieveCitizenIncomeController])
       val nino = Nino(new Generator(new Random()).nextNino.nino).nino
 
-      status(route(fakeApplication, FakeRequest(POST, "/seed/individuals/income?description=Description").withJsonBody(retrieveCitizenIncomeJson)).get)
+      status(route(fakeApplication, FakeRequest(POST, "/seed/individuals/income?status=200&description=Description").withJsonBody(retrieveCitizenIncomeJson)).get)
 
       val r = controller.getRetrieveCitizenIncome(nino)(FakeRequest(POST, s"/individuals/$nino/income").withJsonBody(retrieveCitizenIncomeJson))
       status(r) shouldBe OK
