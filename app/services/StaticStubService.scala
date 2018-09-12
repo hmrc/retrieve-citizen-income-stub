@@ -22,14 +22,14 @@ import scala.io.Source
 
 class StaticStubService extends StubService {
 
-  val errorNotFound = getJsValue("/responses/404-no-data-nino.json")
-  val errorNotFoundNino = getJsValue("/responses/404-not-found-nino.json")
-  val serverError = getJsValue("/responses/500-server-error.json")
-  val serviceUnavailable = getJsValue("/responses/503-service-unavailable.json")
-  val successMatchOneElement = getJsValue("/responses/200-success-matched-one-element.json")
-  val successMatchTwoElements = getJsValue("/responses/200-success-matched-two-elements.json")
-  val successMatchTwoTaxYears = getJsValue("/responses/200-success-matched-two-tax-years.json")
-  val successNoMatch = getJsValue("/responses/200-success-no-match.json")
+  val errorNotFound = getJsValue("/404-no-data-nino.json")
+  val errorNotFoundNino = getJsValue("/404-not-found-nino.json")
+  val serverError = getJsValue("/500-server-error.json")
+  val serviceUnavailable = getJsValue("/503-service-unavailable.json")
+  val successMatchOneElement = getJsValue("/200-success-matched-one-element.json")
+  val successMatchTwoElements = getJsValue("/200-success-matched-two-elements.json")
+  val successMatchTwoTaxYears = getJsValue("/200-success-matched-two-tax-years.json")
+  val successNoMatch = getJsValue("/200-success-no-match.json")
 
   override def getRetrieveCitizenIncome(nino: String): Future[(Option[JsValue], Option[Int])] = {
     nino match {
