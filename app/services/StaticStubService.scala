@@ -50,10 +50,7 @@ class StaticStubService extends StubService {
   }
 
   def getJsValue(jsFilePath:String): JsValue ={
-    val jsonFilePath = getClass.getResource(jsFilePath)
-    jsonFilePath match {
-      case null => throw new Exception("Broken filepath")
-      case _ => Json.parse(Source.fromURL(jsonFilePath).getLines.mkString("\n"))
-    }
+    val resource = getClass.getResourceAsStream(jsFilePath)
+    Json.parse(Source.fromInputStream(resource).getLines().mkString)
   }
 }
