@@ -43,7 +43,7 @@ class RetrieveCitizenIncomeController @Inject()(
       val path = getClass.getResource("/schemas")
       val folder = new File(path.getPath)
       folder.listFiles.filter(x => x.isFile && x.getName.endsWith(".json")).toList.map { file =>
-        Json.parse(Source.fromFile(file).getLines().mkString)
+        Json.parse(Source.fromInputStream(getClass.getResourceAsStream(s"/schemas/${file.getName()}")).mkString)
       }
     }
 
