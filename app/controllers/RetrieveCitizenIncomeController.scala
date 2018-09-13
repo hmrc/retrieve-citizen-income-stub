@@ -39,13 +39,22 @@ class RetrieveCitizenIncomeController @Inject()(
 
     val validator = new SchemaValidator()
 
-    val schemas: List[JsValue] = {
-      val path = getClass.getResource("/schemas")
-      val folder = new File(path.getPath)
-      folder.listFiles.filter(x => x.isFile && x.getName.endsWith(".json")).toList.map { file =>
-        Json.parse(Source.fromInputStream(getClass.getResourceAsStream(s"/schemas/${file.getName()}")).mkString)
-      }
+    val requestSchema: JsValue = {
+      val resource = getClass.getResourceAsStream("/schemas/des-error-response-schema-v1.json")
+      Json.parse(Source.fromInputStream(resource).mkString)
     }
+
+    val errorSeedSchema: JsValue = {
+      val resource = getClass.getResourceAsStream("/schemas/des-request-schema-v1.json")
+      Json.parse(Source.fromInputStream(resource).mkString)
+    }
+
+    val successSeedSchema: JsValue = {
+      val resource = getClass.getResourceAsStream("/schemas/des-response-schema-v1.json")
+      Json.parse(Source.fromInputStream(resource).mkString)
+    }
+
+    val schemas: List[JsValue] = List(requestSchema, errorSeedSchema, successSeedSchema)
 
     jsonToValidate match {
       case Some(json) => {
