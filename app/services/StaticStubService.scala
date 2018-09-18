@@ -46,13 +46,14 @@ class StaticStubService extends StubService {
       case "AA555555A" => Future.successful(Some(errorNotFound), Some(404))
       case "AA666666A" => Future.successful(Some(errorNotFoundNino), Some(404))
       case "AA777777A" => Future.successful(Some(serverError), Some(500))
-      case "AA888888A" => Future.successful(Some(serviceUnavailable), Some(200))
-      case "AA777771A" => Future.successful(Some(serviceUnavailable), Some(200))
-      case "AA777772A" => Future.successful(Some(serviceUnavailable), Some(200))
-      case "AA777773A" => Future.successful(Some(serviceUnavailable), Some(200))
-      case "AA777774A" => Future.successful(Some(serviceUnavailable), Some(200))
-      case "AA777775A" => Future.successful(Some(serviceUnavailable), Some(200))
-      case "AA777776A" => Future.successful(Some(serviceUnavailable), Some(200))
+      case "AA888888A" => Future.successful(Some(serviceUnavailable), Some(500))
+      case "AA777771A" => Future.successful(Some(singleEmpSingleTaxYear), Some(200))
+      case "AA777772A" => Future.successful(Some(multipleEmpSingleTaxYear), Some(200))
+      case "AA777773A" => Future.successful(Some(multipleEmpMultipleTaxYears), Some(200))
+      case "AA777774A" => Future.successful(Some(multipleEmpMultipleTaxYearsOp), Some(200))
+      case "AA777775A" => Future.successful(Some(multipleEmpMultipleTaxYearsYdr), Some(200))
+      case "AA777776A" => Future.successful(Some(validNinoWithNoData), Some(200))
+
       case _ => Future.successful(None, Some(500))
     }
   }
