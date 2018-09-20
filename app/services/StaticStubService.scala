@@ -30,6 +30,12 @@ class StaticStubService extends StubService {
   def successMatchTwoElements = getJsValue("/resources/200-success-matched-two-elements.json")
   def successMatchTwoTaxYears = getJsValue("/resources/200-success-matched-two-tax-years.json")
   def successNoMatch = getJsValue("/resources/200-success-no-match.json")
+  def singleEmpSingleTaxYear = getJsValue("/resources/AA777771A_rti.json")
+  def multipleEmpSingleTaxYear = getJsValue("/resources/AA777772A_rti.json")
+  def multipleEmpMultipleTaxYears = getJsValue("/resources/AA777773A_rti.json")
+  def multipleEmpMultipleTaxYearsOp = getJsValue("/resources/AA777774A_rti.json")
+  def multipleEmpMultipleTaxYearsYdr = getJsValue("/resources/AA777775A_rti.json")
+  def validNinoWithNoData = getJsValue("/resources/AA777776A_rti.json")
 
   override def getRetrieveCitizenIncome(nino: String): Future[(Option[JsValue], Option[Int])] = {
     nino match {
@@ -41,6 +47,13 @@ class StaticStubService extends StubService {
       case "AA666666A" => Future.successful(Some(errorNotFoundNino), Some(404))
       case "AA777777A" => Future.successful(Some(serverError), Some(500))
       case "AA888888A" => Future.successful(Some(serviceUnavailable), Some(500))
+      case "AA777771A" => Future.successful(Some(singleEmpSingleTaxYear), Some(200))
+      case "AA777772A" => Future.successful(Some(multipleEmpSingleTaxYear), Some(200))
+      case "AA777773A" => Future.successful(Some(multipleEmpMultipleTaxYears), Some(200))
+      case "AA777774A" => Future.successful(Some(multipleEmpMultipleTaxYearsOp), Some(200))
+      case "AA777775A" => Future.successful(Some(multipleEmpMultipleTaxYearsYdr), Some(200))
+      case "AA777776A" => Future.successful(Some(validNinoWithNoData), Some(200))
+
       case _ => Future.successful(None, Some(500))
     }
   }
