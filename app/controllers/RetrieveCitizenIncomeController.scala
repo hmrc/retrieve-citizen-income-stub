@@ -16,13 +16,9 @@
 
 package controllers
 
-import java.io.File
-
 import com.eclipsesource.schema.{SchemaType, SchemaValidator}
 import javax.inject.Inject
-
 import models.{FailurePutStubResponseResult, SuccessPutStubResponseResult}
-import play.api.Logger
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import services.StubService
 import uk.gov.hmrc.play.bootstrap.controller.{BaseController, UnauthorisedAction}
@@ -80,6 +76,8 @@ class RetrieveCitizenIncomeController @Inject()(
             NotFound(json)
           case (Some(json), Some(500)) =>
             InternalServerError(json)
+          case _ =>
+            NotFound
 
         }
       case Right(JsError(_)) => Future.successful(BadRequest(Json.parse("{\"code\":\"INVALID_PAYLOAD\",\"reason\":\"Submission has not passed validation. Invalid Payload.\"}")))

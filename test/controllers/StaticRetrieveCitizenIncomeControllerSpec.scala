@@ -50,7 +50,7 @@ class StaticRetrieveCitizenIncomeControllerSpec  extends WordSpec with WithFakeA
       }
 
       "stub doesn't have the given nino" in {
-        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA666666A/income")
+        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA999999A/income")
           .withJsonBody(exampleRequest))
 
         status(r) shouldBe NOT_FOUND
