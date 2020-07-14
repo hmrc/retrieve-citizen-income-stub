@@ -16,20 +16,23 @@
 
 package controllers
 
-import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
+import org.scalatest.BeforeAndAfterEach
+
+import org.scalatestplus.play.PlaySpec
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{status, _}
 import services.StaticStubService
-import uk.gov.hmrc.play.test.WithFakeApplication
+import play.api.test.Helpers._
 
-class StaticRetrieveCitizenIncomeControllerSpec  extends WordSpec with WithFakeApplication with Matchers with BeforeAndAfterEach {
+class StaticRetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfterEach {
 
-  override lazy val fakeApplication = new GuiceApplicationBuilder()
+  override lazy val fakeApplication: Application = new GuiceApplicationBuilder()
     .build()
 
-  val exampleRequest = Json.parse(
+  val exampleRequest: JsValue = Json.parse(
     """{
       |  "fromDate": "2016-12-31",
       |  "toDate": "2017-12-31",
@@ -40,20 +43,20 @@ class StaticRetrieveCitizenIncomeControllerSpec  extends WordSpec with WithFakeA
       |  "dateOfBirth": "2000-03-29"
       |}""".stripMargin)
 
-  "StaticRetrieveCitizenIncomeControllerSpec" should {
+  "StaticRetrieveCitizenIncomeControllerSpec" must {
     "return 404 response" when {
       "stub has no data for given nino" in {
         val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA555555A/income")
           .withJsonBody(exampleRequest))
 
-        status(r) shouldBe NOT_FOUND
+        status(r) mustBe NOT_FOUND
       }
 
       "stub doesn't have the given nino" in {
         val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA999999A/income")
           .withJsonBody(exampleRequest))
 
-        status(r) shouldBe NOT_FOUND
+        status(r) mustBe NOT_FOUND
       }
 
     }
@@ -63,37 +66,37 @@ class StaticRetrieveCitizenIncomeControllerSpec  extends WordSpec with WithFakeA
         val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA111111A/income")
           .withJsonBody(exampleRequest))
 
-        status(r) shouldBe OK
+        status(r) mustBe OK
       }
 
       "there is a match with two elements" in {
         val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA222222A/income")
           .withJsonBody(exampleRequest))
 
-        status(r) shouldBe OK
+        status(r) mustBe OK
       }
 
       "there is a match with two tax years of monthly data" in {
         val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA333333A/income")
           .withJsonBody(exampleRequest))
 
-        status(r) shouldBe OK
+        status(r) mustBe OK
       }
 
       "the nino is valid but there is no match in citizen details" in {
         val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA444444A/income")
           .withJsonBody(exampleRequest))
 
-        status(r) shouldBe OK
+        status(r) mustBe OK
       }
     }
 
- "serve a 500 server error" when {
+    "serve a 500 server error" when {
       "des is currently experiencing technical difficulties" in {
         val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA777777A/income")
           .withJsonBody(exampleRequest))
 
-        status(r) shouldBe INTERNAL_SERVER_ERROR
+        status(r) mustBe INTERNAL_SERVER_ERROR
       }
     }
 
@@ -102,9 +105,9 @@ class StaticRetrieveCitizenIncomeControllerSpec  extends WordSpec with WithFakeA
         val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA888888A/income")
           .withJsonBody(exampleRequest))
 
-        status(r) shouldBe INTERNAL_SERVER_ERROR
+        status(r) mustBe INTERNAL_SERVER_ERROR
       }
     }
   }
-  val SUT = new StaticStubService {}
+  val SUT: StaticStubService = new StaticStubService {}
 }

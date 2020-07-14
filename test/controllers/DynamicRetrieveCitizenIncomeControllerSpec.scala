@@ -15,23 +15,25 @@
  */
 
 import controllers.RetrieveCitizenIncomeController
-import org.scalatest.{BeforeAndAfterEach, Matchers, WordSpec}
+import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.play.PlaySpec
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Application
 import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{POST, contentAsString, route, status, _}
+import play.api.test.Helpers._
 import play.modules.reactivemongo.ReactiveMongoComponent
-import services.{DynamicStubService, StaticStubService, StubService}
+import services.{DynamicStubService, StubService}
 import uk.gov.hmrc.domain.{Generator, Nino}
-import uk.gov.hmrc.play.test.WithFakeApplication
+import play.api.inject.guice.GuiceApplicationBuilder
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Random
 
-class DynamicRetrieveCitizenIncomeControllerSpec extends WordSpec with WithFakeApplication with Matchers with BeforeAndAfterEach  {
+class DynamicRetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfterEach  {
 
-  override lazy val fakeApplication = new GuiceApplicationBuilder()
+  override lazy val fakeApplication: Application = new GuiceApplicationBuilder()
     .configure("mongodb.uri" -> "mongodb://localhost:27017/retrieve-citizen-income-test")
     .overrides(bind(classOf[StubService]).to(classOf[DynamicStubService]))
     .build()
@@ -41,7 +43,7 @@ class DynamicRetrieveCitizenIncomeControllerSpec extends WordSpec with WithFakeA
     fakeApplication.injector.instanceOf[ReactiveMongoComponent].mongoConnector.db().drop()
   }
 
-  "Calling POST /seed/individuals/income" should {
+  "Calling POST /seed/individuals/income" must {
 
     "return 201 when successful when seeding a valid success response" in {
 
@@ -109,8 +111,8 @@ class DynamicRetrieveCitizenIncomeControllerSpec extends WordSpec with WithFakeA
       val Some(r) = route(fakeApplication, FakeRequest(POST, "/seed/individuals/income?description=Description")
         .withJsonBody(retrieveCitizenIncomeValidSuccessJson)
       )
-      status(r) shouldBe CREATED
-      contentAsString(r) shouldBe ""
+      status(r) mustBe CREATED
+      contentAsString(r) mustBe ""
     }
 
     "return 201 successful when seeding a valid error response" in {
@@ -132,8 +134,8 @@ class DynamicRetrieveCitizenIncomeControllerSpec extends WordSpec with WithFakeA
       val Some(r) = route(fakeApplication, FakeRequest(POST, "/seed/individuals/income?description=Description")
         .withJsonBody(retrieveCitizenIncomeValidErrorJson)
       )
-      status(r) shouldBe CREATED
-      contentAsString(r) shouldBe ""
+      status(r) mustBe CREATED
+      contentAsString(r) mustBe ""
     }
 
     "return 400 unsuccessful when seeding an invalid error response" in {
@@ -155,7 +157,7 @@ class DynamicRetrieveCitizenIncomeControllerSpec extends WordSpec with WithFakeA
       val Some(r) = route(fakeApplication, FakeRequest(POST, "/seed/individuals/income?description=Description")
         .withJsonBody(retrieveCitizenIncomeInvalidErrorJson)
       )
-      status(r) shouldBe BAD_REQUEST
+      status(r) mustBe BAD_REQUEST
     }
   }
 
@@ -167,7 +169,7 @@ class DynamicRetrieveCitizenIncomeControllerSpec extends WordSpec with WithFakeA
       val nino = Nino(new Generator(new Random()).nextNino.nino).nino
 
       val r = controller.getRetrieveCitizenIncome(nino)(FakeRequest(POST, s"/individuals/$nino/income"))
-      status(r) shouldBe BAD_REQUEST
+      status(r) mustBe BAD_REQUEST
     }
 
     "return 200 and some json when present when successful" in {
@@ -240,8 +242,8 @@ class DynamicRetrieveCitizenIncomeControllerSpec extends WordSpec with WithFakeA
       status(route(fakeApplication, FakeRequest(POST, "/seed/individuals/income?status=200&description=Description").withJsonBody(retrieveCitizenIncomeJson)).get)
 
       val r = controller.getRetrieveCitizenIncome(nino)(FakeRequest(POST, s"/individuals/$nino/income").withJsonBody(retrieveCitizenIncomeJson))
-      status(r) shouldBe OK
-      contentAsJson(r) shouldBe retrieveCitizenIncomeJson
+      status(r) mustBe OK
+      contentAsJson(r) mustBe retrieveCitizenIncomeJson
 
     }
   }

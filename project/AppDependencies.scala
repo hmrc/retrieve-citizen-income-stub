@@ -6,7 +6,8 @@ import sbt._
 object AppDependencies {
 
   val compile: Seq[ModuleID] = Seq(
-    "uk.gov.hmrc" %% "play-reactivemongo" % "6.8.0", //TODO Deprecated please use simple-reactivemongo
+//    "uk.gov.hmrc" %% "play-reactivemongo" % "6.8.0", //TODO Deprecated please use simple-reactivemongo
+    "uk.gov.hmrc" %% "simple-reactivemongo" % "7.30.0-play-26", //TODO Deprecated please use simple-reactivemongo
     ws,
     "uk.gov.hmrc" %% "bootstrap-play-26" % "1.13.0",
     "uk.gov.hmrc" %% "domain" % "5.9.0-play-26",
@@ -15,9 +16,10 @@ object AppDependencies {
   )
 
   val test: Seq[ModuleID] = Seq(
-    "org.scalatest" %% "scalatest" % "3.2.0",
+    "org.scalatest" %% "scalatest" % "3.0.8",
     "org.pegdown" % "pegdown" % "1.6.0",
-    "com.typesafe.play" %% "play-test" % PlayVersion.current
+    "com.typesafe.play" %% "play-test" % PlayVersion.current,
+    "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.3"
   ).map(_ % "test")
 
   val all: Seq[ModuleID] = compile ++ test
