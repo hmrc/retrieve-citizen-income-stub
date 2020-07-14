@@ -20,18 +20,26 @@ import org.joda.time.DateTime
 import play.api.libs.json._
 import play.api.libs.json.Json
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats.mongoEntity
+import play.api.libs.json.JodaReads
+import play.api.libs.json.JodaWrites
 
-case class RetrieveCitizenIncomeEnvelope(
+final case class RetrieveCitizenIncomeEnvelope(
   status: Int,
   id: String,
   retrieveCitizenIncome: Option[JsValue],
   activatedAt: Option[DateTime]
 ) extends StubDataEnvelope
 
-object RetrieveCitizenIncomeEnvelope{
+object RetrieveCitizenIncomeEnvelope {
 
-  implicit val formats = mongoEntity {
+  private val dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ" //TODO what should this be???
 
+  val jodaDateReads: Reads[DateTime] = JodaReads.jodaDateReads(dateFormat)
+  val jodaDateWrites: Writes[DateTime] = JodaWrites.jodaDateWrites(dateFormat)
+
+  implicit val userFormat: Format[DateTime] = Format(jodaDateReads, jodaDateWrites)
+
+  implicit val formats: Format[RetrieveCitizenIncomeEnvelope] = mongoEntity {
     Json.format[RetrieveCitizenIncomeEnvelope]
   }
 }

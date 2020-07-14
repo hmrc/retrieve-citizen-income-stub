@@ -13,7 +13,6 @@ lazy val microservice = Project(appName, file("."))
     publishingSettings,
     PlayKeys.playDefaultPort := 9359,
     majorVersion := 0,
-    routesGenerator := StaticRoutesGenerator,
     resolvers ++= Seq(
       Resolver.bintrayRepo("hmrc", "releases"),
       Resolver.jcenterRepo,

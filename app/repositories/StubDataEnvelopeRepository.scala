@@ -36,9 +36,9 @@ class StubDataEnvelopeRepository[T <: StubDataEnvelope](
   def activateEnvelope(id: String)(implicit ec: ExecutionContext): Future[Boolean] = {
     this.collection.update(
       selector = Json.obj("_id" -> id),
-      update = Json.obj("$set" -> Json.obj("activatedAt" -> DateTime.now))
+      update = Json.obj("$set" -> Json.obj("activatedAt" -> DateTime.now().toString))
     ) map {
-      case _ => true
+      _ => true
     } recover {
       case _ => false
     }

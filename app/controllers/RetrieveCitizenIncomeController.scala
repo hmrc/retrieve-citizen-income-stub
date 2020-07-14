@@ -20,16 +20,18 @@ import com.eclipsesource.schema.{SchemaType, SchemaValidator}
 import javax.inject.Inject
 import models.{FailurePutStubResponseResult, SuccessPutStubResponseResult}
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
+import play.api.mvc.ControllerComponents
 import services.StubService
-import uk.gov.hmrc.play.bootstrap.controller.{BaseController, UnauthorisedAction}
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 
 class RetrieveCitizenIncomeController @Inject()(
-  stubService: StubService
-) extends BaseController {
+                                                 stubService: StubService,
+                                                 cc: ControllerComponents)
+                                               (implicit ec: ExecutionContext)
+
+  extends BackendController(cc) {
 
   def schemaValidationHandler(jsonToValidate: Option[JsValue]): Either[JsSuccess[JsValue], JsError] = {
 
@@ -54,7 +56,7 @@ class RetrieveCitizenIncomeController @Inject()(
 
     jsonToValidate match {
       case Some(json) => {
-        if(schemas.exists(schema => validator.validate(Json.fromJson[SchemaType](schema).get)(json).isSuccess))
+        if (schemas.exists(schema => validator.validate(Json.fromJson[SchemaType](schema).get)(json).isSuccess))
           Left(JsSuccess(json))
         else
           Right(JsError("Does not validate against any schema"))
@@ -63,7 +65,7 @@ class RetrieveCitizenIncomeController @Inject()(
     }
   }
 
-  def getRetrieveCitizenIncome(nino: String) = UnauthorisedAction.async { implicit request =>
+  def getRetrieveCitizenIncome(nino: String) = Action.async { implicit request =>
 
     schemaValidationHandler(request.body.asJson) match {
       case Left(JsSuccess(_, _)) =>
@@ -84,7 +86,7 @@ class RetrieveCitizenIncomeController @Inject()(
     }
   }
 
-  def seedRetrieveCitizenIncome(status: Option[Int], description: String) = UnauthorisedAction.async { implicit request =>
+  def seedRetrieveCitizenIncome(status: Option[Int], description: String) = Action.async { implicit request =>
 
     schemaValidationHandler(request.body.asJson) match {
       case Left(JsSuccess(_, _)) =>

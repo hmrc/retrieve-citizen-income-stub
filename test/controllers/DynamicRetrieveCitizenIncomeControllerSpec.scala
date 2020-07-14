@@ -36,10 +36,9 @@ class DynamicRetrieveCitizenIncomeControllerSpec extends WordSpec with WithFakeA
     .overrides(bind(classOf[StubService]).to(classOf[DynamicStubService]))
     .build()
 
-
   override def beforeEach(): Unit = {
-    fakeApplication.injector.instanceOf[ReactiveMongoComponent].mongoConnector.db().drop()
     super.beforeEach()
+    fakeApplication.injector.instanceOf[ReactiveMongoComponent].mongoConnector.db().drop()
   }
 
   "Calling POST /seed/individuals/income" should {
