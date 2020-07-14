@@ -6,13 +6,10 @@ import sbt._
 object AppDependencies {
 
   val compile: Seq[ModuleID] = Seq(
-//    "uk.gov.hmrc" %% "play-reactivemongo" % "6.8.0", //TODO Deprecated please use simple-reactivemongo
-    "uk.gov.hmrc" %% "simple-reactivemongo" % "7.30.0-play-26", //TODO Deprecated please use simple-reactivemongo
     ws,
     "uk.gov.hmrc" %% "bootstrap-play-26" % "1.13.0",
     "uk.gov.hmrc" %% "domain" % "5.9.0-play-26",
-    "com.eclipsesource" %% "play-json-schema-validator" % "0.9.4",
-    "com.typesafe.play" %% "play-json-joda" % "2.7.4"
+    "com.eclipsesource" %% "play-json-schema-validator" % "0.9.4"
   )
 
   val test: Seq[ModuleID] = Seq(

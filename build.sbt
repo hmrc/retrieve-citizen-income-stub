@@ -1,4 +1,3 @@
-import uk.gov.hmrc.DefaultBuildSettings.scalaSettings
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
 val appName = "retrieve-citizen-income-stub"
@@ -10,7 +9,6 @@ lazy val microservice = Project(appName, file("."))
     libraryDependencies ++= AppDependencies.all,
     retrieveManaged := true,
     evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
-    scalaSettings,
     publishingSettings,
     PlayKeys.playDefaultPort := 9359,
     majorVersion := 0,
