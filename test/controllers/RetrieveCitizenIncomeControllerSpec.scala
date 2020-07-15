@@ -16,18 +16,25 @@
 
 package controllers
 
+import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.any
+import org.scalatest.prop
 import org.scalatest.BeforeAndAfterEach
-
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatestplus.scalacheck.Checkers
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.inject.bind
 import play.api.libs.json.{JsValue, Json}
-import play.api.test.FakeRequest
+import play.api.mvc.Results._
+import play.api.mvc.{Action, AnyContent}
+import play.api.test.{FakeRequest, Injecting}
 import services.StaticStubService
 import play.api.test.Helpers._
 
-class RetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfterEach {
+class RetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfterEach with MockitoSugar with Injecting {
 
   val exampleRequest: JsValue = Json.parse(
     """{
@@ -40,69 +47,47 @@ class RetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSu
       |  "dateOfBirth": "2000-03-29"
       |}""".stripMargin)
 
-  "StaticRetrieveCitizenIncomeControllerSpec" must {
-    "return 404 response" when {
-      "stub has no data for given nino" in {
-        val Some(r) = route(app, FakeRequest(POST, "/individuals/AA555555A/income")
-          .withJsonBody(exampleRequest))
+  override def fakeApplication: Application =
+    GuiceApplicationBuilder().overrides(
+      bind[StaticStubService].toInstance(mockStubService)
+    ).build()
 
-        status(r) mustBe NOT_FOUND
-      }
+  val mockStubService = mock[StaticStubService]
+  val SUT: RetrieveCitizenIncomeController = inject[RetrieveCitizenIncomeController]
 
-      "stub doesn't have the given nino" in {
-        val Some(r) = route(app, FakeRequest(POST, "/individuals/AA999999A/income")
-          .withJsonBody(exampleRequest))
-
-        status(r) mustBe NOT_FOUND
-      }
-
-    }
-
+  "getRetrieveCitizenIncome" must {
     "return 200 response" when {
       "there is a match with one element" in {
-        val Some(r) = route(app, FakeRequest(POST, "/individuals/AA111111A/income")
-          .withJsonBody(exampleRequest))
+        val fakeRequest = FakeRequest(POST, "")
+          .withJsonBody(exampleRequest)
+        when(mockStubService.getRetrieveCitizenIncome(any())).thenReturn(Ok("Hello"))
 
-        status(r) mustBe OK
+        val response = SUT.getRetrieveCitizenIncome("AA111111A")(fakeRequest)
+
+        status(response) mustBe OK
+        contentAsString(response) mustBe "Hello"
       }
 
-      "there is a match with two elements" in {
-        val Some(r) = route(app, FakeRequest(POST, "/individuals/AA222222A/income")
-          .withJsonBody(exampleRequest))
+      "Return BadRequest" when {
+        "Invalid Json" in {
+          val fakeRequest = FakeRequest(POST, "")
+            .withJsonBody(Json.parse("""{}"""))
 
-        status(r) mustBe OK
-      }
+          val response = SUT.getRetrieveCitizenIncome("AA111111A")(fakeRequest)
 
-      "there is a match with two tax years of monthly data" in {
-        val Some(r) = route(app, FakeRequest(POST, "/individuals/AA333333A/income")
-          .withJsonBody(exampleRequest))
+          status(response) mustBe BAD_REQUEST
+          contentAsJson(response) mustBe Json.parse("""{"code":"INVALID_PAYLOAD","reason":"Submission has not passed validation. Invalid Payload."}""")
+        }
 
-        status(r) mustBe OK
-      }
+        "No Json is provided" in {
+          val fakeRequest = FakeRequest(POST, "")
 
-      "the nino is valid but there is no match in citizen details" in {
-        val Some(r) = route(app, FakeRequest(POST, "/individuals/AA444444A/income")
-          .withJsonBody(exampleRequest))
+          val response = SUT.getRetrieveCitizenIncome("AA111111A")(fakeRequest)
 
-        status(r) mustBe OK
-      }
-    }
-
-    "serve a 500 server error" when {
-      "des is currently experiencing technical difficulties" in {
-        val Some(r) = route(app, FakeRequest(POST, "/individuals/AA777777A/income")
-          .withJsonBody(exampleRequest))
-
-        status(r) mustBe INTERNAL_SERVER_ERROR
-      }
-
-      "dependant systems are currently not responding." in {
-        val Some(r) = route(app, FakeRequest(POST, "/individuals/AA888888A/income")
-          .withJsonBody(exampleRequest))
-
-        status(r) mustBe INTERNAL_SERVER_ERROR
+          status(response) mustBe BAD_REQUEST
+          contentAsJson(response) mustBe Json.parse("""{"code":"INVALID_PAYLOAD","reason":"Submission has not passed validation. Invalid Payload."}""")
+        }
       }
     }
   }
-  val SUT: StaticStubService = new StaticStubService
 }
