@@ -18,86 +18,45 @@ package controllers
 
 import com.eclipsesource.schema.{SchemaType, SchemaValidator}
 import javax.inject.Inject
-import models.{FailurePutStubResponseResult, SuccessPutStubResponseResult}
-import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
-import play.api.mvc.ControllerComponents
+import play.api.libs.json._
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.StubService
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
-import scala.concurrent.{ExecutionContext, Future}
+
 import scala.io.Source
 
 class RetrieveCitizenIncomeController @Inject()(
                                                  stubService: StubService,
-                                                 cc: ControllerComponents)
-                                               (implicit ec: ExecutionContext)
+                                                 cc: ControllerComponents
+                                               ) extends BackendController(cc) {
 
-  extends BackendController(cc) {
 
-  def schemaValidationHandler(jsonToValidate: Option[JsValue]): Either[JsSuccess[JsValue], JsError] = {
+  private val requestSchema: JsValue = {
+    val resource = getClass.getResourceAsStream("/schemas/des-request-schema-v1.json")
+    Json.parse(Source.fromInputStream(resource).mkString)
+  }
 
-    val validator = new SchemaValidator()
+  private val validator: JsValue => JsResult[JsValue] = SchemaValidator().validate(Json.fromJson[SchemaType](requestSchema).get)(_)
 
-    val requestSchema: JsValue = {
-      val resource = getClass.getResourceAsStream("/schemas/des-error-response-schema-v1.json")
-      Json.parse(Source.fromInputStream(resource).mkString)
-    }
-
-    val errorSeedSchema: JsValue = {
-      val resource = getClass.getResourceAsStream("/schemas/des-request-schema-v1.json")
-      Json.parse(Source.fromInputStream(resource).mkString)
-    }
-
-    val successSeedSchema: JsValue = {
-      val resource = getClass.getResourceAsStream("/schemas/des-response-schema-v1.json")
-      Json.parse(Source.fromInputStream(resource).mkString)
-    }
-
-    val schemas: List[JsValue] = List(requestSchema, errorSeedSchema, successSeedSchema)
-
+  def schemaValidationHandler(jsonToValidate: Option[JsValue]): Either[JsError, JsSuccess[JsValue]] = {
     jsonToValidate match {
       case Some(json) => {
-        if (schemas.exists(schema => validator.validate(Json.fromJson[SchemaType](schema).get)(json).isSuccess))
-          Left(JsSuccess(json))
+        if (validator(json).isSuccess)
+          Right(JsSuccess(json))
         else
-          Right(JsError("Does not validate against any schema"))
+          Left(JsError("Does not validate against any schema"))
       }
-      case None => Right(JsError("No json was supplied"))
+      case None => Left(JsError("No json was supplied"))
     }
   }
 
-  def getRetrieveCitizenIncome(nino: String) = Action.async { implicit request =>
-
+  def getRetrieveCitizenIncome(nino: String): Action[AnyContent] = Action { implicit request =>
     schemaValidationHandler(request.body.asJson) match {
-      case Left(JsSuccess(_, _)) =>
-        stubService.getRetrieveCitizenIncome(nino).map {
-          case (None, Some(404)) =>
-            NotFound
-          case (Some(json), Some(200)) =>
-            Ok(json)
-          case (Some(json), Some(404)) =>
-            NotFound(json)
-          case (Some(json), Some(500)) =>
-            InternalServerError(json)
-          case _ =>
-            NotFound
-
-        }
-      case Right(JsError(_)) => Future.successful(BadRequest(Json.parse("{\"code\":\"INVALID_PAYLOAD\",\"reason\":\"Submission has not passed validation. Invalid Payload.\"}")))
-    }
-  }
-
-  def seedRetrieveCitizenIncome(status: Option[Int], description: String) = Action.async { implicit request =>
-
-    schemaValidationHandler(request.body.asJson) match {
-      case Left(JsSuccess(_, _)) =>
-        stubService.seedRetrieveCitizenIncome(request.body.asJson, status, description).map {
-          case SuccessPutStubResponseResult =>
-            Created
-          case FailurePutStubResponseResult =>
-            InternalServerError("Creation failed\n")
-        }
-      case Right(JsError(errors)) =>
-        Future.successful(BadRequest("supplied json did not validate against expected response schema: " + errors.mkString("\n")))
+      case Right(JsSuccess(_, _)) =>
+        stubService.getRetrieveCitizenIncome(nino)
+      case Left(JsError(_)) => BadRequest(
+        Json.parse("""{"code":"INVALID_PAYLOAD","reason":"Submission has not passed validation. Invalid Payload."}""")
+      )
     }
   }
 }

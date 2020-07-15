@@ -16,12 +16,8 @@
 
 package services
 
-import models.PutStubResponseResult
-import play.api.libs.json.JsValue
-
-import scala.concurrent.Future
+import play.api.mvc.Result
 
 trait StubService {
-  def getRetrieveCitizenIncome(nino: String): Future[(Option[JsValue], Option[Int])]
-  def seedRetrieveCitizenIncome(retrieveCitizenIncome: Option[JsValue], status: Option[Int], description: String): Future[PutStubResponseResult]
+  def getRetrieveCitizenIncome(nino: String): Result
 }

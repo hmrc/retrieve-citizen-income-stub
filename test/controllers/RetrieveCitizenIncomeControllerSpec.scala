@@ -27,10 +27,7 @@ import play.api.test.FakeRequest
 import services.StaticStubService
 import play.api.test.Helpers._
 
-class StaticRetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfterEach {
-
-  override lazy val fakeApplication: Application = new GuiceApplicationBuilder()
-    .build()
+class RetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfterEach {
 
   val exampleRequest: JsValue = Json.parse(
     """{
@@ -46,14 +43,14 @@ class StaticRetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAp
   "StaticRetrieveCitizenIncomeControllerSpec" must {
     "return 404 response" when {
       "stub has no data for given nino" in {
-        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA555555A/income")
+        val Some(r) = route(app, FakeRequest(POST, "/individuals/AA555555A/income")
           .withJsonBody(exampleRequest))
 
         status(r) mustBe NOT_FOUND
       }
 
       "stub doesn't have the given nino" in {
-        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA999999A/income")
+        val Some(r) = route(app, FakeRequest(POST, "/individuals/AA999999A/income")
           .withJsonBody(exampleRequest))
 
         status(r) mustBe NOT_FOUND
@@ -63,28 +60,28 @@ class StaticRetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAp
 
     "return 200 response" when {
       "there is a match with one element" in {
-        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA111111A/income")
+        val Some(r) = route(app, FakeRequest(POST, "/individuals/AA111111A/income")
           .withJsonBody(exampleRequest))
 
         status(r) mustBe OK
       }
 
       "there is a match with two elements" in {
-        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA222222A/income")
+        val Some(r) = route(app, FakeRequest(POST, "/individuals/AA222222A/income")
           .withJsonBody(exampleRequest))
 
         status(r) mustBe OK
       }
 
       "there is a match with two tax years of monthly data" in {
-        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA333333A/income")
+        val Some(r) = route(app, FakeRequest(POST, "/individuals/AA333333A/income")
           .withJsonBody(exampleRequest))
 
         status(r) mustBe OK
       }
 
       "the nino is valid but there is no match in citizen details" in {
-        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA444444A/income")
+        val Some(r) = route(app, FakeRequest(POST, "/individuals/AA444444A/income")
           .withJsonBody(exampleRequest))
 
         status(r) mustBe OK
@@ -93,21 +90,19 @@ class StaticRetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAp
 
     "serve a 500 server error" when {
       "des is currently experiencing technical difficulties" in {
-        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA777777A/income")
+        val Some(r) = route(app, FakeRequest(POST, "/individuals/AA777777A/income")
           .withJsonBody(exampleRequest))
 
         status(r) mustBe INTERNAL_SERVER_ERROR
       }
-    }
 
-    "serve a 503 service unavailable" when {
       "dependant systems are currently not responding." in {
-        val Some(r) = route(fakeApplication, FakeRequest(POST, "/individuals/AA888888A/income")
+        val Some(r) = route(app, FakeRequest(POST, "/individuals/AA888888A/income")
           .withJsonBody(exampleRequest))
 
         status(r) mustBe INTERNAL_SERVER_ERROR
       }
     }
   }
-  val SUT: StaticStubService = new StaticStubService {}
+  val SUT: StaticStubService = new StaticStubService
 }
