@@ -16,25 +16,55 @@
 
 package controllers
 
-import org.mockito.Mockito.when
 import org.mockito.ArgumentMatchers.any
-import org.scalatest.prop
+import org.mockito.Mockito.{reset, when}
+import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import org.scalatestplus.scalacheck.Checkers
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
+import play.api.mvc.Result
 import play.api.mvc.Results._
-import play.api.mvc.{Action, AnyContent}
+import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Injecting}
 import services.StaticStubService
-import play.api.test.Helpers._
 
-class RetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfterEach with MockitoSugar with Injecting {
+import scala.concurrent.Future
+
+class RetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfterEach with MockitoSugar with Injecting with ScalaCheckPropertyChecks {
+
+
+  override def beforeEach() = {
+    super.beforeEach()
+    reset(mockStubService)
+  }
+
+  val resultsGenerator: Gen[Result] = for {
+    statusCode: Int <- Gen.choose(200, 599)
+    body: String <- Arbitrary.arbitrary[String]
+  } yield {
+    Status(statusCode)("Generated-string: " + body)
+  }
+
+  "thing response is" in {
+    val fakeRequest = FakeRequest(POST, "")
+      .withJsonBody(exampleRequest)
+
+    forAll(resultsGenerator) {
+      generatedResult: Result =>
+        val nino: String = "AA111111A"
+        when(mockStubService.getRetrieveCitizenIncome(nino)).thenReturn(generatedResult)
+        val result = SUT.getRetrieveCitizenIncome(nino)(fakeRequest)
+        status(result) mustBe generatedResult.header.status
+        contentAsString(result) mustBe contentAsString(Future.successful(generatedResult))
+    }
+  }
+
 
   val exampleRequest: JsValue = Json.parse(
     """{
