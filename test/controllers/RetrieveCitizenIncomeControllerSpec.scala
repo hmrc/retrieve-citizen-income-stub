@@ -16,7 +16,6 @@
 
 package controllers
 
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.BeforeAndAfterEach
@@ -38,35 +37,7 @@ import scala.concurrent.Future
 
 class RetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfterEach with MockitoSugar with Injecting with ScalaCheckPropertyChecks {
 
-
-  override def beforeEach() = {
-    super.beforeEach()
-    reset(mockStubService)
-  }
-
-  val resultsGenerator: Gen[Result] = for {
-    statusCode: Int <- Gen.choose(200, 599)
-    body: String <- Arbitrary.arbitrary[String]
-  } yield {
-    Status(statusCode)("Generated-string: " + body)
-  }
-
-  "thing response is" in {
-    val fakeRequest = FakeRequest(POST, "")
-      .withJsonBody(exampleRequest)
-
-    forAll(resultsGenerator) {
-      generatedResult: Result =>
-        val nino: String = "AA111111A"
-        when(mockStubService.getRetrieveCitizenIncome(nino)).thenReturn(generatedResult)
-        val result = SUT.getRetrieveCitizenIncome(nino)(fakeRequest)
-        status(result) mustBe generatedResult.header.status
-        contentAsString(result) mustBe contentAsString(Future.successful(generatedResult))
-    }
-  }
-
-
-  val exampleRequest: JsValue = Json.parse(
+  val validRequestJson: JsValue = Json.parse(
     """{
       |  "fromDate": "2016-12-31",
       |  "toDate": "2017-12-31",
@@ -75,48 +46,67 @@ class RetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSu
       |  "gender": "M",
       |  "initials": "J B",
       |  "dateOfBirth": "2000-03-29"
-      |}""".stripMargin)
+      |}""".stripMargin
+  )
+  val mockStubService: StaticStubService = mock[StaticStubService]
+  val SUT: RetrieveCitizenIncomeController = inject[RetrieveCitizenIncomeController]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockStubService)
+  }
 
   override def fakeApplication: Application =
     GuiceApplicationBuilder().overrides(
       bind[StaticStubService].toInstance(mockStubService)
     ).build()
 
-  val mockStubService = mock[StaticStubService]
-  val SUT: RetrieveCitizenIncomeController = inject[RetrieveCitizenIncomeController]
-
   "getRetrieveCitizenIncome" must {
-    "return 200 response" when {
-      "there is a match with one element" in {
-        val fakeRequest = FakeRequest(POST, "")
-          .withJsonBody(exampleRequest)
-        when(mockStubService.getRetrieveCitizenIncome(any())).thenReturn(Ok("Hello"))
+    "return what the service provides" when {
+      "request contains some valid json" in {
+        val resultsGenerator: Gen[Result] = for {
+          statusCode: Int <- Gen.choose(min = 200, max = 599)
+          genString: String <- Arbitrary.arbitrary[String]
+          body: String = "Generated-string: " + genString
+        } yield {
+          Status(statusCode)(body)
+        }
 
+        val fakeRequest = FakeRequest().withJsonBody(validRequestJson)
+
+        forAll(resultsGenerator) {
+          generatedResult: Result =>
+            val nino: String = "AA111111A"
+            when(mockStubService.getRetrieveCitizenIncome(nino)).thenReturn(generatedResult)
+            val result = SUT.getRetrieveCitizenIncome(nino)(fakeRequest)
+            status(result) mustBe generatedResult.header.status
+            contentAsString(result) mustBe contentAsString(Future.successful(generatedResult))
+        }
+      }
+    }
+
+    "Return BadRequest" when {
+      val expectedJson: JsValue = Json.parse(
+        """ |{
+          |"code":"INVALID_PAYLOAD",
+          |"reason":"Submission has not passed validation. Invalid Payload."
+          |}""".stripMargin
+      )
+
+      "the Json does not match the schema" in {
+        val fakeRequest = FakeRequest().withJsonBody(Json.parse("""{}"""))
         val response = SUT.getRetrieveCitizenIncome("AA111111A")(fakeRequest)
 
-        status(response) mustBe OK
-        contentAsString(response) mustBe "Hello"
+        status(response) mustBe BAD_REQUEST
+        contentAsJson(response) mustBe expectedJson
       }
 
-      "Return BadRequest" when {
-        "Invalid Json" in {
-          val fakeRequest = FakeRequest(POST, "")
-            .withJsonBody(Json.parse("""{}"""))
+      "no Json is provided" in {
+        val fakeRequest = FakeRequest()
+        val response = SUT.getRetrieveCitizenIncome("AA111111A")(fakeRequest)
 
-          val response = SUT.getRetrieveCitizenIncome("AA111111A")(fakeRequest)
-
-          status(response) mustBe BAD_REQUEST
-          contentAsJson(response) mustBe Json.parse("""{"code":"INVALID_PAYLOAD","reason":"Submission has not passed validation. Invalid Payload."}""")
-        }
-
-        "No Json is provided" in {
-          val fakeRequest = FakeRequest(POST, "")
-
-          val response = SUT.getRetrieveCitizenIncome("AA111111A")(fakeRequest)
-
-          status(response) mustBe BAD_REQUEST
-          contentAsJson(response) mustBe Json.parse("""{"code":"INVALID_PAYLOAD","reason":"Submission has not passed validation. Invalid Payload."}""")
-        }
+        status(response) mustBe BAD_REQUEST
+        contentAsJson(response) mustBe expectedJson
       }
     }
   }

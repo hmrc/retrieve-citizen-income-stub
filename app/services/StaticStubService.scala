@@ -15,12 +15,15 @@
  */
 
 package services
+
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import play.api.mvc.Results._
 
 import scala.io.Source
-//TODO rename this
+
+
+//TODO SIMPLIFY
 class StaticStubService extends StubService {
 
   def errorNotFound: JsValue = getJsValue("/resources/404-no-data-nino.json")

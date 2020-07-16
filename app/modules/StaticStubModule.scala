@@ -19,6 +19,8 @@ package modules
 import com.google.inject.AbstractModule
 import services.{StaticStubService, StubService}
 
+
+//TODO DELETE
 class StaticStubModule extends AbstractModule {
   override def configure(): Unit = {
     bind(classOf[StubService]).to(classOf[StaticStubService])
