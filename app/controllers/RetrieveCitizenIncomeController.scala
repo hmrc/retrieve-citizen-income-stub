@@ -16,45 +16,23 @@
 
 package controllers
 
-import com.eclipsesource.schema.{SchemaType, SchemaValidator}
 import javax.inject.Inject
 import play.api.libs.json._
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import services.CitizenIncomeService
+import play.api.mvc.{Action, ControllerComponents}
+import services.{CitizenIncomeService, SchemaValidation}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
-
-import scala.io.Source
 
 class RetrieveCitizenIncomeController @Inject()(
                                                  stubService: CitizenIncomeService,
+                                                 schema: SchemaValidation,
                                                  cc: ControllerComponents
                                                ) extends BackendController(cc) {
 
-
-  private val requestSchema: JsValue = {
-    val resource = getClass.getResourceAsStream("/schemas/des-request-schema-v1.json")
-    Json.parse(Source.fromInputStream(resource).mkString)
-  }
-
-  private val validator: JsValue => JsResult[JsValue] = SchemaValidator().validate(Json.fromJson[SchemaType](requestSchema).get)(_)
-
-  def schemaValidationHandler(jsonToValidate: Option[JsValue]): Either[JsError, JsSuccess[JsValue]] = {
-    jsonToValidate match {
-      case Some(json) => {
-        if (validator(json).isSuccess)
-          Right(JsSuccess(json))
-        else
-          Left(JsError("Does not validate against any schema"))
-      }
-      case None => Left(JsError("No json was supplied"))
-    }
-  }
-
-  def getRetrieveCitizenIncome(nino: String): Action[AnyContent] = Action { implicit request =>
-    schemaValidationHandler(request.body.asJson) match {
+  def getRetrieveCitizenIncome(nino: String): Action[JsValue] = Action(parse.json) { implicit request =>
+    schema.validateJSON(request.body) match {
       case Right(JsSuccess(_, _)) =>
         stubService.getRetrieveCitizenIncome(nino)
-      case Left(JsError(_)) => BadRequest.apply(
+      case Left(JsError(_)) => BadRequest(
         Json.parse("""{"code":"INVALID_PAYLOAD","reason":"Submission has not passed validation. Invalid Payload."}""")
       )
     }
