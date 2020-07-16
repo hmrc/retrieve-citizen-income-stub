@@ -31,7 +31,7 @@ import play.api.mvc.Result
 import play.api.mvc.Results._
 import play.api.test.Helpers._
 import play.api.test.{FakeRequest, Injecting}
-import services.StaticStubService
+import services.CitizenIncomeService
 
 import scala.concurrent.Future
 
@@ -48,7 +48,7 @@ class RetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSu
       |  "dateOfBirth": "2000-03-29"
       |}""".stripMargin
   )
-  val mockStubService: StaticStubService = mock[StaticStubService]
+  val mockStubService: CitizenIncomeService = mock[CitizenIncomeService]
   val SUT: RetrieveCitizenIncomeController = inject[RetrieveCitizenIncomeController]
 
   override def beforeEach(): Unit = {
@@ -58,7 +58,7 @@ class RetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSu
 
   override def fakeApplication: Application =
     GuiceApplicationBuilder().overrides(
-      bind[StaticStubService].toInstance(mockStubService)
+      bind[CitizenIncomeService].toInstance(mockStubService)
     ).build()
 
   "getRetrieveCitizenIncome" must {

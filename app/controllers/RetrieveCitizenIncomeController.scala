@@ -20,13 +20,13 @@ import com.eclipsesource.schema.{SchemaType, SchemaValidator}
 import javax.inject.Inject
 import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import services.StubService
+import services.CitizenIncomeService
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
 import scala.io.Source
 
 class RetrieveCitizenIncomeController @Inject()(
-                                                 stubService: StubService,
+                                                 stubService: CitizenIncomeService,
                                                  cc: ControllerComponents
                                                ) extends BackendController(cc) {
 
