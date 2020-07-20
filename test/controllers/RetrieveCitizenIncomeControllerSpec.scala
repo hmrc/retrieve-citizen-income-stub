@@ -87,7 +87,7 @@ class RetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSu
         forAll(resultsGenerator) {
           generatedResult: Result =>
             when(mockStubService.getRetrieveCitizenIncome(nino)).thenReturn(generatedResult)
-            when(mockSchemaValidation.validateJSON(ArgumentMatchers.any())).thenReturn(Right(JsSuccess(validRequestJson)))
+            when(mockSchemaValidation.isJsonValid(ArgumentMatchers.any())).thenReturn(true)
             val result = SUT.getRetrieveCitizenIncome(nino)(fakeRequest())
             status(result) mustBe generatedResult.header.status
             contentAsString(result) mustBe contentAsString(Future.successful(generatedResult))
@@ -116,7 +116,7 @@ class RetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSu
         )
 
         val invalidJsonFakeRequest = fakeRequest(invalidRequestJson)
-        when(mockSchemaValidation.validateJSON(ArgumentMatchers.any())).thenReturn(Left(JsError("Validation Error")))
+        when(mockSchemaValidation.isJsonValid(ArgumentMatchers.any())).thenReturn(false)
 
         val response = SUT.getRetrieveCitizenIncome("AA111111A")(invalidJsonFakeRequest)
 

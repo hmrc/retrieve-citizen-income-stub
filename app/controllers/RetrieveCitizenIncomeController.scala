@@ -29,12 +29,12 @@ class RetrieveCitizenIncomeController @Inject()(
                                                ) extends BackendController(cc) {
 
   def getRetrieveCitizenIncome(nino: String): Action[JsValue] = Action(parse.json) { implicit request =>
-    schema.validateJSON(request.body) match {
-      case Right(JsSuccess(_, _)) =>
-        stubService.getRetrieveCitizenIncome(nino)
-      case Left(JsError(_)) => BadRequest(
-        Json.parse("""{"code":"INVALID_PAYLOAD","reason":"Submission has not passed validation. Invalid Payload."}""")
-      )
+
+    if(schema.isJsonValid(request.body)){
+      stubService.getRetrieveCitizenIncome(nino)
+    } else {
+      BadRequest(
+        Json.parse("""{"code":"INVALID_PAYLOAD","reason":"Submission has not passed validation. Invalid Payload."}"""))
     }
   }
 }
