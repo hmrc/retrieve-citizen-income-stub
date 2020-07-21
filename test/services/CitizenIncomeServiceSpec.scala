@@ -24,7 +24,7 @@ import repositories.CitizenIncomeRepository._
 
 import scala.concurrent.Future
 
-class StubServiceSpec extends PlaySpec {
+class CitizenIncomeServiceSpec extends PlaySpec {
 
   val SUT = new CitizenIncomeService
 

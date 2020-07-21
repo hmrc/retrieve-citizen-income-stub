@@ -19,31 +19,33 @@ package services
 import com.google.inject.Inject
 import play.api.Logger
 import play.api.mvc.Result
-import play.api.mvc.Results._
+import play.api.mvc.Results.{NotFound, Ok, InternalServerError}
 import repositories.CitizenIncomeRepository._
 
 class CitizenIncomeService @Inject()() {
 
   private val logger: Logger = Logger(this.getClass)
 
-  def getRetrieveCitizenIncome(nino: String): Result =
-    nino match {
-      case "AA111111A" => Ok(successMatchOneElement)
-      case "AA222222A" => Ok(successMatchTwoElements)
-      case "AA333333A" => Ok(successMatchTwoTaxYears)
-      case "AA444444A" => Ok(successNoMatch)
-      case "AA555555A" => NotFound(errorNotFound)
-      case "AA666666A" => NotFound(errorNotFoundNino)
-      case "AA777777A" => InternalServerError(serverError)
-      case "AA888888A" => InternalServerError(serviceUnavailable)
-      case "AA777771A" => Ok(singleEmpSingleTaxYear)
-      case "AA777772A" => Ok(multipleEmpSingleTaxYear)
-      case "AA777773A" => Ok(multipleEmpMultipleTaxYears)
-      case "AA777774A" => Ok(multipleEmpMultipleTaxYearsOp)
-      case "AA777775A" => Ok(multipleEmpMultipleTaxYearsYdr)
-      case "AA777776A" => Ok(validNinoWithNoData)
-      case _ =>
-        logger.debug(s"Nino $nino was not found.")
-        NotFound
-    }
+  private val ninoResults: Map[String, Result] = Map(
+    "AA111111A" -> Ok(successMatchOneElement),
+    "AA222222A" -> Ok(successMatchTwoElements),
+    "AA333333A" -> Ok(successMatchTwoTaxYears),
+    "AA444444A" -> Ok(successNoMatch),
+    "AA555555A" -> NotFound(errorNotFound),
+    "AA666666A" -> NotFound(errorNotFoundNino),
+    "AA777777A" -> InternalServerError(serverError),
+    "AA888888A" -> InternalServerError(serviceUnavailable),
+    "AA777771A" -> Ok(singleEmpSingleTaxYear),
+    "AA777772A" -> Ok(multipleEmpSingleTaxYear),
+    "AA777773A" -> Ok(multipleEmpMultipleTaxYears),
+    "AA777774A" -> Ok(multipleEmpMultipleTaxYearsOp),
+    "AA777775A" -> Ok(multipleEmpMultipleTaxYearsYdr),
+    "AA777776A" -> Ok(validNinoWithNoData)
+  ).withDefault( nino => {
+    logger.debug(s"Nino $nino was not found.")
+    NotFound
+  })
+
+  def getRetrieveCitizenIncome(nino: String): Result = ninoResults(nino)
+
 }

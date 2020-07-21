@@ -23,7 +23,7 @@ import services.{CitizenIncomeService, SchemaValidation}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
 class RetrieveCitizenIncomeController @Inject()(
-                                                 stubService: CitizenIncomeService,
+                                                 citizenIncomeService: CitizenIncomeService,
                                                  schema: SchemaValidation,
                                                  cc: ControllerComponents
                                                ) extends BackendController(cc) {
@@ -31,7 +31,7 @@ class RetrieveCitizenIncomeController @Inject()(
   def getRetrieveCitizenIncome(nino: String): Action[JsValue] = Action(parse.json) { implicit request =>
 
     if(schema.isJsonValid(request.body)){
-      stubService.getRetrieveCitizenIncome(nino)
+      citizenIncomeService.getRetrieveCitizenIncome(nino)
     } else {
       BadRequest(
         Json.parse("""{"code":"INVALID_PAYLOAD","reason":"Submission has not passed validation. Invalid Payload."}"""))
