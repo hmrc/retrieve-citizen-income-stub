@@ -1,6 +1,22 @@
+import play.sbt.routes.RoutesKeys
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
+import scoverage.ScoverageKeys
+
 
 val appName = "retrieve-citizen-income-stub"
+
+lazy val scoverageSettings = {
+  val sCoverageExcludesPattens = List(
+    ".*Routes.*",
+    ".*Reverse.*Controller"
+  )
+  Seq(
+    ScoverageKeys.coverageExcludedPackages := sCoverageExcludesPattens.mkString(";", ";", ""),
+    ScoverageKeys.coverageMinimum := 95,
+    ScoverageKeys.coverageFailOnMinimum := false,
+    ScoverageKeys.coverageHighlighting := true
+  )
+}
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
@@ -10,7 +26,10 @@ lazy val microservice = Project(appName, file("."))
     retrieveManaged := true,
     evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     publishingSettings,
+    scoverageSettings,
+    RoutesKeys.routesImport := Nil,
     PlayKeys.playDefaultPort := 9359,
+    scalacOptions += "-Xfatal-warnings",
     majorVersion := 0,
     resolvers ++= Seq(
       Resolver.bintrayRepo("hmrc", "releases"),
