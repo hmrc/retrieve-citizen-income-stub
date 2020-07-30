@@ -16,14 +16,15 @@
 
 package services
 
-import com.eclipsesource.schema.{SchemaType, SchemaValidator}
+import com.eclipsesource.schema
+import schema.SchemaType
 import com.google.inject.Inject
 import play.api.Logger
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 
 import scala.io.Source
 
-class SchemaValidation @Inject()() {
+class SchemaValidator @Inject()() {
 
   private val logger: Logger = Logger(this.getClass)
 
@@ -33,15 +34,14 @@ class SchemaValidation @Inject()() {
     json.validate[SchemaType].getOrElse(throw new RuntimeException("Json Schema is not valid Json"))
   }
 
-  private val validator: SchemaValidator = SchemaValidator()
+  private val validator: schema.SchemaValidator = schema.SchemaValidator()
 
   def isJsonValid(json: JsValue): Boolean = {
     validator.validate(requestSchema)(json) match {
       case JsSuccess(_, _) => true
-      case JsError(error) => {
+      case JsError(error) =>
         logger.debug(s"Json request is not valid: $error")
         false
-      }
     }
   }
 }

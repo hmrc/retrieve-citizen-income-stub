@@ -29,11 +29,11 @@ import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.Result
+import play.api.mvc.{Result}
 import play.api.mvc.Results._
 import play.api.test.Helpers._
 import play.api.test.{FakeHeaders, FakeRequest, Injecting, NoMaterializer}
-import services.{CitizenIncomeService, SchemaValidation}
+import services.{CitizenIncomeService, SchemaValidator}
 
 import scala.concurrent.Future
 
@@ -41,7 +41,7 @@ class RetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSu
 
   implicit val noMaterializer: Materializer = NoMaterializer
 
-  val nino: String = "AA111111A"
+  val nino: String = "NINO"
 
   val validRequestJson: JsValue = Json.parse(
     """{
@@ -55,11 +55,11 @@ class RetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSu
       |}""".stripMargin
   )
 
-  def fakeRequest(json: JsValue = validRequestJson): FakeRequest[JsValue] = FakeRequest("POST", "/", FakeHeaders(), json)
-    .withHeaders(("Content-type", "application/json"))
+  def fakeRequest(json: JsValue = validRequestJson): FakeRequest[JsValue] =
+    FakeRequest("POST", "/", FakeHeaders(Seq(("Content-type", "application/json"))), json)
 
   val mockStubService: CitizenIncomeService = mock[CitizenIncomeService]
-  val mockSchemaValidation: SchemaValidation = mock[SchemaValidation]
+  val mockSchemaValidation: SchemaValidator = mock[SchemaValidator]
   val SUT: RetrieveCitizenIncomeController = inject[RetrieveCitizenIncomeController]
 
   override def beforeEach(): Unit = {
@@ -70,7 +70,7 @@ class RetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSu
   override def fakeApplication: Application =
     GuiceApplicationBuilder().overrides(
       bind[CitizenIncomeService].toInstance(mockStubService),
-      bind[SchemaValidation].toInstance(mockSchemaValidation)
+      bind[SchemaValidator].toInstance(mockSchemaValidation)
     ).build()
 
   "getRetrieveCitizenIncome" must {

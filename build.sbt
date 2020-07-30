@@ -6,12 +6,12 @@ import scoverage.ScoverageKeys
 val appName = "retrieve-citizen-income-stub"
 
 lazy val scoverageSettings = {
-  val sCoverageExcludesPattens = List(
+  val scoverageExcludesPattens = List(
     ".*Routes.*",
     ".*Reverse.*Controller"
   )
   Seq(
-    ScoverageKeys.coverageExcludedPackages := sCoverageExcludesPattens.mkString(";", ";", ""),
+    ScoverageKeys.coverageExcludedPackages := scoverageExcludesPattens.mkString(";", ";", ""),
     ScoverageKeys.coverageMinimum := 95,
     ScoverageKeys.coverageFailOnMinimum := false,
     ScoverageKeys.coverageHighlighting := true

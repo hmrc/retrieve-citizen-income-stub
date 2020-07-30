@@ -19,22 +19,26 @@ package controllers
 import javax.inject.Inject
 import play.api.libs.json._
 import play.api.mvc.{Action, ControllerComponents}
-import services.{CitizenIncomeService, SchemaValidation}
+import services.{CitizenIncomeService, SchemaValidator}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
 class RetrieveCitizenIncomeController @Inject()(
                                                  citizenIncomeService: CitizenIncomeService,
-                                                 schema: SchemaValidation,
+                                                 schemaValidator: SchemaValidator,
                                                  cc: ControllerComponents
                                                ) extends BackendController(cc) {
 
   def getRetrieveCitizenIncome(nino: String): Action[JsValue] = Action(parse.json) { implicit request =>
 
-    if(schema.isJsonValid(request.body)){
+    if(schemaValidator.isJsonValid(request.body)){
       citizenIncomeService.getRetrieveCitizenIncome(nino)
     } else {
       BadRequest(
-        Json.parse("""{"code":"INVALID_PAYLOAD","reason":"Submission has not passed validation. Invalid Payload."}"""))
+        JsObject(Map(
+          "code" -> JsString("INVALID_PAYLOAD"),
+          "reason" -> JsString("Submission has not passed validation. Invalid Payload.")
+        ))
+      )
     }
   }
 }

@@ -21,7 +21,7 @@ import play.api.libs.json._
 
 class SchemaValidationSpec extends PlaySpec {
 
-  val testSchemaValidaton: SchemaValidation = new SchemaValidation
+  val testSchemaValidaton: SchemaValidator = new SchemaValidator
 
   "isJsonValid" must {
     "return true when given valid json that is supported by the schema" in {
