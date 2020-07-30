@@ -29,8 +29,8 @@ class CitizenIncomeServiceSpec extends PlaySpec {
   val SUT = new CitizenIncomeService
 
   "getRetrieveCitizenIncome" must {
-    Map(
-      200 -> List(
+    Seq(
+      OK -> Seq(
           "AA111111A" -> successMatchOneElement,
           "AA222222A" -> successMatchTwoElements,
           "AA333333A" -> successMatchTwoTaxYears,
@@ -42,33 +42,34 @@ class CitizenIncomeServiceSpec extends PlaySpec {
           "AA777775A" -> multipleEmpMultipleTaxYearsYdr,
           "AA777776A" -> validNinoWithNoData
       ),
-      404 -> List(
+      NOT_FOUND -> Seq(
         "AA555555A" -> errorNotFound,
-        "AA666666A" -> errorNotFoundNino,
-        "an unmatched Nino" -> null
+        "AA666666A" -> errorNotFoundNino
       ),
-      500 -> List(
+      INTERNAL_SERVER_ERROR -> Seq(
         "AA777777A" -> serverError,
         "AA888888A" -> serviceUnavailable
       )
     ) foreach {
-      case (expectedStatus: Int, l: List[(String, JsValue)]) =>
+      case (expectedStatus: Int, testCases: Seq[(String, JsValue)]) =>
         s"return $expectedStatus" when {
-          l.foreach {
+          testCases.foreach {
             case (nino: String, body: JsValue) =>
               s"called with $nino" in {
                 val result: Result = SUT.getRetrieveCitizenIncome(nino)
                 result.header.status mustBe expectedStatus
                 contentAsJson(Future.successful(result)) mustBe body
               }
-            case (nino: String, _) =>
-              s"called with $nino" in {
-                val result: Result = SUT.getRetrieveCitizenIncome(nino)
-                result.header.status mustBe expectedStatus
-              }
+
           }
         }
     }
+    "Return default not found" when {
+      "The nino does not match" in {
+        val result: Result = SUT.getRetrieveCitizenIncome("unmatched nino")
+        result.header.status mustBe NOT_FOUND
+        contentAsString(Future.successful(result)) mustBe "unmatched nino not found in stub."
+      }
+    }
   }
-
 }

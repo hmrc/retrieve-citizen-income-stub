@@ -24,9 +24,7 @@ class SchemaValidationSpec extends PlaySpec {
   val testSchemaValidaton: SchemaValidation = new SchemaValidation
 
   "isJsonValid" must {
-
     "return true when given valid json that is supported by the schema" in {
-
       val validRequestJson: JsValue = Json.parse(
         """{
           |  "fromDate": "2016-12-31",
@@ -40,11 +38,9 @@ class SchemaValidationSpec extends PlaySpec {
       )
 
       testSchemaValidaton.isJsonValid(validRequestJson) mustBe true
-
     }
 
     "return false when given invalid Json that will not pass schema validation" in {
-
       val invalidRequestJson: JsValue = Json.parse(
         """{
           |"unknownField": "unknown"
@@ -52,7 +48,6 @@ class SchemaValidationSpec extends PlaySpec {
       )
 
       testSchemaValidaton.isJsonValid(invalidRequestJson) mustBe false
-
     }
   }
 }

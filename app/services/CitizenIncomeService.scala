@@ -43,7 +43,7 @@ class CitizenIncomeService @Inject()() {
     "AA777776A" -> Ok(validNinoWithNoData)
   ).withDefault( nino => {
     logger.debug(s"Nino $nino was not found.")
-    NotFound
+    NotFound(s"$nino not found in stub.")
   })
 
   def getRetrieveCitizenIncome(nino: String): Result = ninoResults(nino)

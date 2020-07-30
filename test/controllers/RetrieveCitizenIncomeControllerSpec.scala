@@ -64,7 +64,7 @@ class RetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSu
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockStubService)
+    reset(mockStubService, mockSchemaValidation)
   }
 
   override def fakeApplication: Application =
@@ -118,7 +118,7 @@ class RetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSu
         val invalidJsonFakeRequest = fakeRequest(invalidRequestJson)
         when(mockSchemaValidation.isJsonValid(ArgumentMatchers.any())).thenReturn(false)
 
-        val response = SUT.getRetrieveCitizenIncome("AA111111A")(invalidJsonFakeRequest)
+        val response = SUT.getRetrieveCitizenIncome(nino)(invalidJsonFakeRequest)
 
         status(response) mustBe BAD_REQUEST
         contentAsJson(response) mustBe expectedJson
