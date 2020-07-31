@@ -30,7 +30,7 @@ lazy val microservice = Project(appName, file("."))
     RoutesKeys.routesImport := Nil,
     PlayKeys.playDefaultPort := 9359,
     scalacOptions += "-Xfatal-warnings",
-    majorVersion := 0,
+    majorVersion := 1,
     resolvers ++= Seq(
       Resolver.bintrayRepo("hmrc", "releases"),
       Resolver.jcenterRepo,
