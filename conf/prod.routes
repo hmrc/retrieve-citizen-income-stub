@@ -1,6 +1,5 @@
-POST  /seed/individuals/income                        @controllers.RetrieveCitizenIncomeController.seedRetrieveCitizenIncome(status: Option[Int], description: String)
-POST  /individuals/:nino/income                       @controllers.RetrieveCitizenIncomeController.getRetrieveCitizenIncome(nino: String)
+POST       /individuals/:nino/income    controllers.RetrieveCitizenIncomeController.getRetrieveCitizenIncome(nino: String)
 
-->         /                          health.Routes
+->         /                            health.Routes
 
-GET        /admin/metrics             @com.kenshoo.play.metrics.MetricsController.metrics
+GET        /admin/metrics               @com.kenshoo.play.metrics.MetricsController.metrics
