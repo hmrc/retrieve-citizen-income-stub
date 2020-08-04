@@ -1,4 +1,6 @@
-resolvers += Resolver.url("HMRC Sbt Plugin Releases", url("https://dl.bintray.com/hmrc/sbt-plugin-releases"))(Resolver.ivyStylePatterns)
+resolvers += Resolver.url("HMRC Sbt Plugin Releases", url("https://dl.bintray.com/hmrc/sbt-plugin-releases"))(
+  Resolver.ivyStylePatterns
+)
 resolvers += "HMRC Releases" at "https://dl.bintray.com/hmrc/releases"
 resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/"
 resolvers += "emueller-bintray" at "https://dl.bintray.com/emueller/maven"

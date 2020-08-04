@@ -37,7 +37,13 @@ import services.{CitizenIncomeService, SchemaValidator}
 
 import scala.concurrent.Future
 
-class RetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfterEach with MockitoSugar with Injecting with ScalaCheckPropertyChecks {
+class RetrieveCitizenIncomeControllerSpec
+    extends PlaySpec
+    with GuiceOneAppPerSuite
+    with BeforeAndAfterEach
+    with MockitoSugar
+    with Injecting
+    with ScalaCheckPropertyChecks {
 
   implicit val noMaterializer: Materializer = NoMaterializer
 
@@ -60,7 +66,7 @@ class RetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSu
 
   val mockStubService: CitizenIncomeService = mock[CitizenIncomeService]
   val mockSchemaValidation: SchemaValidator = mock[SchemaValidator]
-  val SUT: RetrieveCitizenIncomeController = inject[RetrieveCitizenIncomeController]
+  val SUT: RetrieveCitizenIncomeController  = inject[RetrieveCitizenIncomeController]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -68,29 +74,28 @@ class RetrieveCitizenIncomeControllerSpec extends PlaySpec with GuiceOneAppPerSu
   }
 
   override def fakeApplication: Application =
-    GuiceApplicationBuilder().overrides(
-      bind[CitizenIncomeService].toInstance(mockStubService),
-      bind[SchemaValidator].toInstance(mockSchemaValidation)
-    ).build()
+    GuiceApplicationBuilder()
+      .overrides(
+        bind[CitizenIncomeService].toInstance(mockStubService),
+        bind[SchemaValidator].toInstance(mockSchemaValidation)
+      )
+      .build()
 
   "getRetrieveCitizenIncome" must {
     "return what the service provides" when {
       "request contains some valid json" in {
         val resultsGenerator: Gen[Result] = for {
-          statusCode: Int <- Gen.choose(min = 200, max = 599)
+          statusCode: Int   <- Gen.choose(min = 200, max = 599)
           genString: String <- Arbitrary.arbitrary[String]
           body: String = "Generated-string: " + genString
-        } yield {
-          Status(statusCode)(body)
-        }
+        } yield Status(statusCode)(body)
 
-        forAll(resultsGenerator) {
-          generatedResult: Result =>
-            when(mockStubService.getRetrieveCitizenIncome(nino)).thenReturn(generatedResult)
-            when(mockSchemaValidation.isJsonValid(ArgumentMatchers.any())).thenReturn(true)
-            val result = SUT.getRetrieveCitizenIncome(nino)(fakeRequest())
-            status(result) mustBe generatedResult.header.status
-            contentAsString(result) mustBe contentAsString(Future.successful(generatedResult))
+        forAll(resultsGenerator) { generatedResult: Result =>
+          when(mockStubService.getRetrieveCitizenIncome(nino)).thenReturn(generatedResult)
+          when(mockSchemaValidation.isJsonValid(ArgumentMatchers.any())).thenReturn(true)
+          val result = SUT.getRetrieveCitizenIncome(nino)(fakeRequest())
+          status(result) mustBe generatedResult.header.status
+          contentAsString(result) mustBe contentAsString(Future.successful(generatedResult))
         }
       }
     }

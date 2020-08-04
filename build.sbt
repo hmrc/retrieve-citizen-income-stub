@@ -2,7 +2,6 @@ import play.sbt.routes.RoutesKeys
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 import scoverage.ScoverageKeys
 
-
 val appName = "retrieve-citizen-income-stub"
 
 lazy val scoverageSettings = {
