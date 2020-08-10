@@ -31,16 +31,16 @@ class CitizenIncomeServiceSpec extends PlaySpec {
   "getRetrieveCitizenIncome" must {
     Seq(
       OK -> Seq(
-          "AA111111A" -> successMatchOneElement,
-          "AA222222A" -> successMatchTwoElements,
-          "AA333333A" -> successMatchTwoTaxYears,
-          "AA444444A" -> successNoMatch,
-          "AA777771A" -> singleEmpSingleTaxYear,
-          "AA777772A" -> multipleEmpSingleTaxYear,
-          "AA777773A" -> multipleEmpMultipleTaxYears,
-          "AA777774A" -> multipleEmpMultipleTaxYearsOp,
-          "AA777775A" -> multipleEmpMultipleTaxYearsYdr,
-          "AA777776A" -> validNinoWithNoData
+        "AA111111A" -> successMatchOneElement,
+        "AA222222A" -> successMatchTwoElements,
+        "AA333333A" -> successMatchTwoTaxYears,
+        "AA444444A" -> successNoMatch,
+        "AA777771A" -> singleEmpSingleTaxYear,
+        "AA777772A" -> multipleEmpSingleTaxYear,
+        "AA777773A" -> multipleEmpMultipleTaxYears,
+        "AA777774A" -> multipleEmpMultipleTaxYearsOp,
+        "AA777775A" -> multipleEmpMultipleTaxYearsYdr,
+        "AA777776A" -> validNinoWithNoData
       ),
       NOT_FOUND -> Seq(
         "AA555555A" -> errorNotFound,

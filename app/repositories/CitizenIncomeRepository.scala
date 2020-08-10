@@ -15,28 +15,30 @@
  */
 
 package repositories
+
 import play.api.libs.json.{JsValue, Json}
 import scala.io.Source
 
 object CitizenIncomeRepository {
 
-  val errorNotFound: JsValue = getJsValue("/404-no-data-nino.json")
-  val errorNotFoundNino: JsValue = getJsValue("/404-not-found-nino.json")
-  val serverError: JsValue = getJsValue("/500-server-error.json")
-  val serviceUnavailable: JsValue = getJsValue("/503-service-unavailable.json")
-  val successMatchOneElement: JsValue = getJsValue("/200-success-matched-one-element.json")
-  val successMatchTwoElements: JsValue = getJsValue("/200-success-matched-two-elements.json")
-  val successMatchTwoTaxYears: JsValue = getJsValue("/200-success-matched-two-tax-years.json")
-  val successNoMatch: JsValue = getJsValue("/200-success-no-match.json")
-  val singleEmpSingleTaxYear: JsValue = getJsValue("/AA777771A_rti.json")
-  val multipleEmpSingleTaxYear: JsValue = getJsValue("/AA777772A_rti.json")
-  val multipleEmpMultipleTaxYears: JsValue = getJsValue("/AA777773A_rti.json")
-  val multipleEmpMultipleTaxYearsOp: JsValue = getJsValue("/AA777774A_rti.json")
+  val errorNotFound: JsValue                  = getJsValue("/404-no-data-nino.json")
+  val errorNotFoundNino: JsValue              = getJsValue("/404-not-found-nino.json")
+  val serverError: JsValue                    = getJsValue("/500-server-error.json")
+  val serviceUnavailable: JsValue             = getJsValue("/503-service-unavailable.json")
+  val successMatchOneElement: JsValue         = getJsValue("/200-success-matched-one-element.json")
+  val successMatchTwoElements: JsValue        = getJsValue("/200-success-matched-two-elements.json")
+  val successMatchTwoTaxYears: JsValue        = getJsValue("/200-success-matched-two-tax-years.json")
+  val successNoMatch: JsValue                 = getJsValue("/200-success-no-match.json")
+  val singleEmpSingleTaxYear: JsValue         = getJsValue("/AA777771A_rti.json")
+  val multipleEmpSingleTaxYear: JsValue       = getJsValue("/AA777772A_rti.json")
+  val multipleEmpMultipleTaxYears: JsValue    = getJsValue("/AA777773A_rti.json")
+  val multipleEmpMultipleTaxYearsOp: JsValue  = getJsValue("/AA777774A_rti.json")
   val multipleEmpMultipleTaxYearsYdr: JsValue = getJsValue("/AA777775A_rti.json")
-  val validNinoWithNoData: JsValue = getJsValue("/AA777776A_rti.json")
+  val validNinoWithNoData: JsValue            = getJsValue("/AA777776A_rti.json")
 
   private def getJsValue(jsFilePath: String): JsValue = {
     val resource = getClass.getResourceAsStream("/resources" + jsFilePath)
     Json.parse(Source.fromInputStream(resource).getLines().mkString)
   }
+
 }

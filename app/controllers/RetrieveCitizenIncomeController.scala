@@ -22,23 +22,25 @@ import play.api.mvc.{Action, ControllerComponents}
 import services.{CitizenIncomeService, SchemaValidator}
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
-class RetrieveCitizenIncomeController @Inject()(
-                                                 citizenIncomeService: CitizenIncomeService,
-                                                 schemaValidator: SchemaValidator,
-                                                 cc: ControllerComponents
-                                               ) extends BackendController(cc) {
+class RetrieveCitizenIncomeController @Inject() (
+    citizenIncomeService: CitizenIncomeService,
+    schemaValidator: SchemaValidator,
+    cc: ControllerComponents
+) extends BackendController(cc) {
 
-  def getRetrieveCitizenIncome(nino: String): Action[JsValue] = Action(parse.json) { implicit request =>
-
-    if(schemaValidator.isJsonValid(request.body)){
-      citizenIncomeService.getRetrieveCitizenIncome(nino)
-    } else {
-      BadRequest(
-        JsObject(Map(
-          "code" -> JsString("INVALID_PAYLOAD"),
-          "reason" -> JsString("Submission has not passed validation. Invalid Payload.")
-        ))
-      )
+  def getRetrieveCitizenIncome(nino: String): Action[JsValue] =
+    Action(parse.json) { implicit request =>
+      if (schemaValidator.isJsonValid(request.body))
+        citizenIncomeService.getRetrieveCitizenIncome(nino)
+      else
+        BadRequest(
+          JsObject(
+            Map(
+              "code"   -> JsString("INVALID_PAYLOAD"),
+              "reason" -> JsString("Submission has not passed validation. Invalid Payload.")
+            )
+          )
+        )
     }
-  }
+
 }

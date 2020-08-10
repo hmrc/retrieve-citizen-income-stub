@@ -19,10 +19,10 @@ package services
 import com.google.inject.Inject
 import play.api.Logger
 import play.api.mvc.Result
-import play.api.mvc.Results.{NotFound, Ok, InternalServerError}
+import play.api.mvc.Results.{InternalServerError, NotFound, Ok}
 import repositories.CitizenIncomeRepository._
 
-class CitizenIncomeService @Inject()() {
+class CitizenIncomeService @Inject() () {
 
   private val logger: Logger = Logger(this.getClass)
 
@@ -41,10 +41,10 @@ class CitizenIncomeService @Inject()() {
     "AA777774A" -> Ok(multipleEmpMultipleTaxYearsOp),
     "AA777775A" -> Ok(multipleEmpMultipleTaxYearsYdr),
     "AA777776A" -> Ok(validNinoWithNoData)
-  ).withDefault( nino => {
+  ).withDefault { nino =>
     logger.debug(s"Nino $nino was not found.")
     NotFound(s"$nino not found in stub.")
-  })
+  }
 
   def getRetrieveCitizenIncome(nino: String): Result = ninoResults(nino)
 

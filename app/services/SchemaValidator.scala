@@ -24,24 +24,24 @@ import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 
 import scala.io.Source
 
-class SchemaValidator @Inject()() {
+class SchemaValidator @Inject() () {
 
   private val logger: Logger = Logger(this.getClass)
 
   private val requestSchema: SchemaType = {
     val resource = getClass.getResourceAsStream("/schemas/des-request-schema-v1.json")
-    val json = Json.parse(Source.fromInputStream(resource).mkString)
+    val json     = Json.parse(Source.fromInputStream(resource).mkString)
     json.validate[SchemaType].getOrElse(throw new RuntimeException("Json Schema is not valid Json"))
   }
 
   private val validator: schema.SchemaValidator = schema.SchemaValidator()
 
-  def isJsonValid(json: JsValue): Boolean = {
+  def isJsonValid(json: JsValue): Boolean =
     validator.validate(requestSchema)(json) match {
       case JsSuccess(_, _) => true
       case JsError(error) =>
         logger.debug(s"Json request is not valid: $error")
         false
     }
-  }
+
 }
