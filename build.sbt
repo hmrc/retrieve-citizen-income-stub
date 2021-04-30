@@ -30,9 +30,5 @@ lazy val microservice = Project(appName, file("."))
     PlayKeys.playDefaultPort := 9359,
     scalacOptions += "-Xfatal-warnings",
     majorVersion := 1,
-    resolvers ++= Seq(
-      Resolver.bintrayRepo("hmrc", "releases"),
-      Resolver.jcenterRepo,
-      Resolver.bintrayRepo("emueller", "maven")
-    )
+    resolvers += Resolver.jcenterRepo
   )
