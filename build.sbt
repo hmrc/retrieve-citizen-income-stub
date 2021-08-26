@@ -30,5 +30,6 @@ lazy val microservice = Project(appName, file("."))
     PlayKeys.playDefaultPort := 9359,
     scalacOptions += "-Xfatal-warnings",
     majorVersion := 1,
-    resolvers += Resolver.jcenterRepo
+    resolvers += Resolver.jcenterRepo,
+    resolvers += "jitpack" at "https://jitpack.io"
   )

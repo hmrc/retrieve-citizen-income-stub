@@ -20,7 +20,7 @@ import javax.inject.Inject
 import play.api.libs.json._
 import play.api.mvc.{Action, ControllerComponents}
 import services.{CitizenIncomeService, SchemaValidator}
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 class RetrieveCitizenIncomeController @Inject() (
     citizenIncomeService: CitizenIncomeService,
