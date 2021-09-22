@@ -23,7 +23,6 @@ import org.mockito.Mockito.{reset, when}
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.must.Matchers._
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.bind
@@ -40,7 +39,6 @@ import scala.concurrent.Future
 
 class RetrieveCitizenIncomeControllerSpec
     extends UnitSpec
-    with GuiceOneAppPerSuite
     with BeforeAndAfterEach
     with Injecting
     with ScalaCheckPropertyChecks {
