@@ -20,7 +20,9 @@ import akka.stream.Materializer
 import akka.util.ByteString
 import org.mockito.Mockito
 import org.mockito.stubbing.Answer
-import org.scalatest.{BeforeAndAfterEach, Matchers, OptionValues, AnyWordSpecLike}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
+import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result

@@ -17,8 +17,10 @@ object AppDependencies {
     "org.pegdown"             % "pegdown"            % "1.6.0",
     "org.mockito"             % "mockito-core"       % "3.12.4",
     "org.scalacheck"         %% "scalacheck"         % "1.15.4",
+    "org.scalatestplus" %% "scalacheck-1-14" % "3.1.1.1",
     "com.typesafe.play"      %% "play-test"          % PlayVersion.current,
-    "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0"
+    "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0",
+    "com.vladsch.flexmark" % "flexmark-all" % "0.35.10"
   ).map(_ % "test")
 
   val all: Seq[ModuleID] = compile ++ test
