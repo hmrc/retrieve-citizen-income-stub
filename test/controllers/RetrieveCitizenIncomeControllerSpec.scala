@@ -17,31 +17,29 @@
 package controllers
 
 import akka.stream.Materializer
+import akka.stream.testkit.NoMaterializer
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.PlaySpec
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import org.scalatest.matchers.must.Matchers._
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Result}
+import play.api.mvc.Result
 import play.api.mvc.Results._
 import play.api.test.Helpers._
-import play.api.test.{FakeHeaders, FakeRequest, Injecting, NoMaterializer}
+import play.api.test.{FakeHeaders, FakeRequest, Injecting}
 import services.{CitizenIncomeService, SchemaValidator}
+import test_utils.UnitSpec
 
 import scala.concurrent.Future
 
 class RetrieveCitizenIncomeControllerSpec
-    extends PlaySpec
-    with GuiceOneAppPerSuite
+    extends UnitSpec
     with BeforeAndAfterEach
-    with MockitoSugar
     with Injecting
     with ScalaCheckPropertyChecks {
 
