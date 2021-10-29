@@ -40,7 +40,8 @@ class CitizenIncomeService @Inject() () {
     "AA777773A" -> Ok(multipleEmpMultipleTaxYears),
     "AA777774A" -> Ok(multipleEmpMultipleTaxYearsOp),
     "AA777775A" -> Ok(multipleEmpMultipleTaxYearsYdr),
-    "AA777776A" -> Ok(validNinoWithNoData)
+    "AA777776A" -> Ok(validNinoWithNoData),
+    "AA888881A" -> Ok(successLimitedFields)
   ).withDefault { nino =>
     logger.debug(s"Nino $nino was not found.")
     NotFound(s"$nino not found in stub.")
