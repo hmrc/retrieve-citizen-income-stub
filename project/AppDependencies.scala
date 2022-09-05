@@ -5,12 +5,12 @@ import sbt._
 
 object AppDependencies {
 
-  val bootstrapPlayVersion = "7.0.0"
+  val bootstrapPlayVersion = "7.1.0"
 
   val compile: Seq[ModuleID] = Seq(
     ws,
     "uk.gov.hmrc"                       %% "bootstrap-backend-play-28" % bootstrapPlayVersion,
-    "uk.gov.hmrc"                       %% "domain"                    % "6.2.0-play-28",
+    "uk.gov.hmrc"                       %% "domain"                    % "8.1.0-play-28",
     "com.github.everit-org.json-schema" %  "org.everit.json.schema"    % "1.13.0"
   )
 
