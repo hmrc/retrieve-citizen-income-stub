@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ class CitizenIncomeService @Inject() () {
     "AA777771A" -> Ok(singleEmpSingleTaxYear),
     "AA777772A" -> Ok(multipleEmpSingleTaxYear),
     "AA777773A" -> Ok(multipleEmpMultipleTaxYears),
+    "AA777773 " -> Ok(multipleEmpMultipleTaxYears), // Temp fix for space in Nino Scenarios
     "AA777774A" -> Ok(multipleEmpMultipleTaxYearsOp),
     "AA777775A" -> Ok(multipleEmpMultipleTaxYearsYdr),
     "AA777776A" -> Ok(validNinoWithNoData),
