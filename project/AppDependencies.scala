@@ -5,7 +5,7 @@ import sbt._
 
 object AppDependencies {
 
-  val bootstrapPlayVersion = "7.1.0"
+  val bootstrapPlayVersion = "7.12.0"
 
   val compile: Seq[ModuleID] = Seq(
     ws,
@@ -15,12 +15,12 @@ object AppDependencies {
   )
 
   val test: Seq[ModuleID] = Seq(
-    "uk.gov.hmrc"            %% "bootstrap-test-play-28" % bootstrapPlayVersion,
-    "org.pegdown"             % "pegdown"            % "1.6.0",
-    "org.mockito"             % "mockito-core"       % "4.7.0",
-    "org.scalacheck"         %% "scalacheck"         % "1.16.0",
-    "org.scalatestplus" %% "scalacheck-1-14" % "3.2.2.0",
-    "com.typesafe.play"      %% "play-test"          % PlayVersion.current
+    "uk.gov.hmrc"       %% "bootstrap-test-play-28" % bootstrapPlayVersion,
+    "org.pegdown"       % "pegdown"                 % "1.6.0",
+    "org.mockito"       % "mockito-core"            % "4.7.0",
+    "org.scalacheck"    %% "scalacheck"             % "1.16.0",
+    "org.scalatestplus" %% "scalacheck-1-14"        % "3.2.2.0",
+    "com.typesafe.play" %% "play-test"              % PlayVersion.current
   ).map(_ % "test")
 
   val all: Seq[ModuleID] = compile ++ test

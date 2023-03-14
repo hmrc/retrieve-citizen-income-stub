@@ -68,10 +68,11 @@ class RetrieveCitizenIncomeControllerSpec
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockStubService, mockSchemaValidation)
+    reset(mockStubService)
+    reset(mockSchemaValidation)
   }
 
-  override def fakeApplication: Application =
+  override def fakeApplication(): Application =
     GuiceApplicationBuilder()
       .overrides(
         bind[CitizenIncomeService].toInstance(mockStubService),
