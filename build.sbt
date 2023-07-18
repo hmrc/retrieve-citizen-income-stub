@@ -1,4 +1,5 @@
 import play.sbt.routes.RoutesKeys
+import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 import scoverage.ScoverageKeys
 
 val appName = "retrieve-citizen-income-stub"
@@ -19,10 +20,10 @@ lazy val scoverageSettings = {
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .settings(
-    scalaVersion := "2.13.10",
+    scalaVersion := "2.13.8",
     libraryDependencies ++= AppDependencies.all,
-    libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
     retrieveManaged := true,
+    publishingSettings,
     scoverageSettings,
     RoutesKeys.routesImport := Nil,
     PlayKeys.playDefaultPort := 9359,
