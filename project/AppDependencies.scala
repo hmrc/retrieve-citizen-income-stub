@@ -1,5 +1,4 @@
 import sbt.ModuleID
-import play.core.PlayVersion
 import play.sbt.PlayImport._
 import sbt._
 
@@ -25,5 +24,4 @@ object AppDependencies {
   ).map(_ % "test")
 
   val all: Seq[ModuleID] = compile ++ test
-
 }
