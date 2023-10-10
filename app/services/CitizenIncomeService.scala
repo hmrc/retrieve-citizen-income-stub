@@ -32,7 +32,6 @@ class CitizenIncomeService @Inject() () {
     "AA333333A" -> Ok(successMatchTwoTaxYears),
     "AA444444A" -> Ok(successNoMatch),
     "AA555555A" -> NotFound(errorNotFound),
-    "AA666666A" -> NotFound(errorNotFoundNino),
     "AA777777A" -> InternalServerError(serverError),
     "AA888888A" -> InternalServerError(serviceUnavailable),
     "AA777771A" -> Ok(singleEmpSingleTaxYear),
@@ -45,7 +44,7 @@ class CitizenIncomeService @Inject() () {
     "AA888881A" -> Ok(successLimitedFields)
   ).withDefault { nino =>
     logger.debug(s"Nino $nino was not found.")
-    NotFound(s"$nino not found in stub.")
+    NotFound(errorNotFoundNino)
   }
 
   def getRetrieveCitizenIncome(nino: String): Result = ninoResults(nino)
