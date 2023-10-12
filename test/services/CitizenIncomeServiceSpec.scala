@@ -69,7 +69,7 @@ class CitizenIncomeServiceSpec extends PlaySpec {
       "The nino does not match" in {
         val result: Result = SUT.getRetrieveCitizenIncome("unmatched nino")
         result.header.status mustBe NOT_FOUND
-        contentAsString(Future.successful(result)) mustBe "unmatched nino not found in stub."
+        contentAsJson(Future.successful(result)) mustBe errorNotFoundNino
       }
     }
   }
