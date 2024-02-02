@@ -1,5 +1,3 @@
 POST       /individuals/:nino/income    controllers.RetrieveCitizenIncomeController.getRetrieveCitizenIncome(nino: String)
 
 ->         /                            health.Routes
-
-GET        /admin/metrics               @com.kenshoo.play.metrics.MetricsController.metrics
