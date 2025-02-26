@@ -89,7 +89,7 @@ class RetrieveCitizenIncomeControllerSpec
           body: String = "Generated-string: " + genString
         } yield Status(statusCode)(body)
 
-        forAll(resultsGenerator) { generatedResult: Result =>
+        forAll(resultsGenerator) { generatedResult =>
           when(mockStubService.getRetrieveCitizenIncome(nino)).thenReturn(generatedResult)
           when(mockSchemaValidation.isJsonValid(ArgumentMatchers.any())).thenReturn(true)
           val result = SUT.getRetrieveCitizenIncome(nino)(fakeRequest())
