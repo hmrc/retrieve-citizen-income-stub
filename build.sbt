@@ -32,6 +32,6 @@ lazy val microservice = Project(appName, file("."))
       "-Xfatal-warnings",
       "-Wconf:msg=Flag.*repeatedly:s"
     ),
-    resolvers += Resolver.jcenterRepo,
-    resolvers += "jitpack" at "https://jitpack.io"
+//    resolvers += Resolver.jcenterRepo,
+//    resolvers += "jitpack" at "https://jitpack.io"
   )
