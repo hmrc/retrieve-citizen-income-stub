@@ -4,7 +4,7 @@ import scoverage.ScoverageKeys
 val appName = "retrieve-citizen-income-stub"
 
 ThisBuild / majorVersion := 1
-ThisBuild / scalaVersion := "3.6.3"
+ThisBuild / scalaVersion := "3.7.3"
 
 lazy val scoverageSettings = {
   val scoverageExcludesPattens = List(
@@ -32,6 +32,4 @@ lazy val microservice = Project(appName, file("."))
       "-Xfatal-warnings",
       "-Wconf:msg=Flag.*repeatedly:s"
     ),
-    resolvers += Resolver.jcenterRepo,
-    resolvers += "jitpack" at "https://jitpack.io"
   )
