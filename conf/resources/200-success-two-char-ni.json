@@ -1,0 +1,33 @@
+{
+  "matchPattern": 1,
+  "taxYears": [
+    {
+      "taxYear": "19-20",
+      "taxYearIndicator": "P",
+      "hmrcOfficeNumber": "099",
+      "employerPayeRef": "A1B2c3d4e5",
+      "employerName1": "Two Char NI Employer",
+      "nationalInsuranceNumber": "AB123456C",
+      "surname": "Surname",
+      "gender": "M",
+      "uniqueEmploymentSequenceNumber": 1111,
+      "taxablePayInPeriod": 123456.78,
+      "taxDeductedOrRefunded": 5678.90,
+      "grossEarningsForNICs": 111111.11,
+      "taxablePayToDate": 123456.78,
+      "totalTaxToDate": 987654.32,
+      "numberOfNormalHoursWorked": "E",
+      "payFrequency": "M1",
+      "paymentDate": "2020-02-03",
+      "earningsPeriodsCovered": 12,
+      "uniquePaymentId": 999999,
+      "paymentConfidenceStatus": "1",
+      "niLetter": "CD",
+      "taxCode": "11100L",
+      "trivialCommutationPaymentTypeA": 99998,
+      "hmrcReceiptTimestamp": "2020-04-16T09:23:55Z",
+      "rtiReceivedDate": "2020-04-16",
+      "apiAvailableTimestamp": "2020-04-16T09:23:55Z"
+    }
+  ]
+}

@@ -36,6 +36,7 @@ object CitizenIncomeRepository {
   val multipleEmpMultipleTaxYearsYdr: JsValue = getJsValue("/AA777775A_rti.json")
   val validNinoWithNoData: JsValue            = getJsValue("/AA777776A_rti.json")
   val successLimitedFields: JsValue           = getJsValue("/200-success-limited-fields.json")
+  val twoCharNiWithData: JsValue              = getJsValue("/200-success-two-char-ni.json")
 
   private def getJsValue(jsFilePath: String): JsValue = {
     val resource = getClass.getResourceAsStream("/resources" + jsFilePath)
