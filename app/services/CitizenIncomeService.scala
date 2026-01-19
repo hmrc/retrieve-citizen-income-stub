@@ -42,7 +42,7 @@ class CitizenIncomeService @Inject() () {
     "AA777775A" -> Ok(multipleEmpMultipleTaxYearsYdr),
     "AA777776A" -> Ok(validNinoWithNoData),
     "AA888881A" -> Ok(successLimitedFields),
-    "AB123456C" -> Ok(twoCharNiWithData)           // Two-character NI letter test case
+    "AB123456C" -> Ok(twoCharNiWithData)
   ).withDefault { nino =>
     logger.debug(s"Nino $nino was not found.")
     NotFound(errorNotFoundNino)
