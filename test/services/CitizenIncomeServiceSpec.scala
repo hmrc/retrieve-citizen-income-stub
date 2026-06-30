@@ -41,7 +41,8 @@ class CitizenIncomeServiceSpec extends PlaySpec {
         "AA777773 " -> multipleEmpMultipleTaxYears,
         "AA777774A" -> multipleEmpMultipleTaxYearsOp,
         "AA777775A" -> multipleEmpMultipleTaxYearsYdr,
-        "AA777776A" -> validNinoWithNoData
+        "AA777776A" -> validNinoWithNoData,
+        "AB123456C" -> twoCharNiWithData
       ),
       NOT_FOUND -> Seq(
         "AA555555A" -> errorNotFound,
