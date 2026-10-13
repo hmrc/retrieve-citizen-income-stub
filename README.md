@@ -1,9 +1,7 @@
 # retrieve-citizen-income-stub
 
-## Description
-This implements stubs for API#1394. Details of the API can be found on Integration Hub.
-
-## Stub details
+## About
+This API is part of the PTA service and it implements stubs for API#1394. Details of the API can be found on Integration Hub.
 
 The stub will validate the data passed (see conf/schemas/des-request-schema-v1.json) and if valid the NINO will be used to produce a response.
 
@@ -21,7 +19,6 @@ The following NINOs will return the following data (see conf/resources for the j
     "AA777771A" -> Ok(singleEmpSingleTaxYear),
     "AA777772A" -> Ok(multipleEmpSingleTaxYear),
     "AA777773A" -> Ok(multipleEmpMultipleTaxYears),
-    "AA777773 " -> Ok(multipleEmpMultipleTaxYears), // Temp fix for space in Nino Scenarios
     "AA777774A" -> Ok(multipleEmpMultipleTaxYearsOp),
     "AA777775A" -> Ok(multipleEmpMultipleTaxYearsYdr),
     "AA777776A" -> Ok(validNinoWithNoData),
